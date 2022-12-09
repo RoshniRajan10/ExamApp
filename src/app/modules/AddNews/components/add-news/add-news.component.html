@@ -1,0 +1,156 @@
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <!-- left column -->
+      <div class="col-md-12">
+        <!-- general form elements -->
+        <div class="card card-primary mt-3">
+          <div class="card-header">
+            <h3 class="card-title">News</h3>
+          </div>
+          <div class="card-body">
+            <form [formGroup]="addNewsForm" action="">
+              <div class="row mb-3">
+                <div class="col-6" *ngIf="CatKey == '' || CatKey == undefined">
+                  <label>Main topic <span style="color: red;">*</span> </label>
+                  <select
+                    formControlName="categoryKey"
+                    required
+                    class="form-control"
+                    [ngClass]="{
+                      'is-invalid': submitted && newsform.categoryKey.errors
+                    }"
+                  >
+                    <option value="">Select main topic</option>
+                    <option *ngFor="let item of categoryList" [ngValue]="item">{{
+                      item.categoryName
+                    }}</option>
+                  </select>
+                  <div
+                    *ngIf="submitted && newsform.categoryKey.errors"
+                    class="invalid-feedback"
+                  >
+                    <div *ngIf="newsform.categoryKey.errors.required">
+                      Main topic is required.
+                    </div>
+                  </div>
+                </div>
+                <div class="col-6" *ngIf="CatKey">
+                  <label>Main Topic </label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    style="background-color: white;"
+                    formControlName="categoryName"
+                    [(ngModel)]="categoryNames"
+                    disabled
+                  />
+                </div>
+                <div class="col-6">
+                  <label>News title<span style="color: red;">*</span></label>
+                  <input
+                    class="form-control"
+                    type="text"
+                    formControlName="newsName"
+                    placeholder="News title"
+                    required
+                    [ngClass]="{
+                      'is-invalid': submitted && newsform.newsName.errors
+                    }"
+                  />
+                  <div *ngIf="submitted && newsform.newsName.errors">
+                    <div
+                      *ngIf="newsform.newsName.errors.required"
+                      style="
+                        width: 100%;
+                        margin-top: 0.25rem;
+                        font-size: 80%;
+                        color: #dc3545;
+                      "
+                    >
+                      News title is required.
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row mb-3">
+                <div class="col-12">
+                  <label>Description <span style="color: red;">*</span></label>
+                  <ejs-richtexteditor
+                    type="text"
+                    class="form-control"
+                    formControlName="description"
+                    rows="5"
+                    required
+                    [ngClass]="{
+                      'is-invalid': submitted && newsform.description.errors
+                    }"
+                  >
+                  </ejs-richtexteditor>
+                  <div
+                    *ngIf="submitted && newsform.description.errors"
+                    class="invalid-feedback"
+                  >
+                    <div *ngIf="newsform.description.errors.required">
+                      Description is required.
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row mb-3">
+                <div class="col-12">
+                  <label>Url <span style="color: red;">*</span> </label>
+                  <input
+                    class="form-control"
+                    type="text"
+                    formControlName="newsLink"
+                    placeholder="News link"
+                    required                    
+                    (keyup)="urlValidation($event)"
+                    (change)="urlValidation($event)"
+                    [ngClass]="{
+                      'is-invalid': submitted && newsform.newsLink.errors
+                    }"
+                  />
+                  <div
+                    *ngIf="submitted && newsform.newsLink.errors"
+                    class="invalid-feedback"
+                  >
+                    <div *ngIf="newsform.newsLink.errors.required">
+                      Url is required.
+                    </div>
+                    <div *ngIf="newsform.newsLink.errors?.pattern">
+                      Enter a valid url.
+                    </div>
+                  </div>
+                  <div *ngIf="invalidUrl && !newsform.newsLink.errors" class="mt-1" style="color: #dc3545;">
+                    Enter a valid url.
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+          <div class="card-footer d-flex justify-content-end">
+            <button class="btn btn-secondary mr-2" (click)="gotoList()">
+              Cancel
+            </button>
+            <button
+              *ngIf="CatKey == '' || CatKey == undefined"
+              type="button"
+              class="btn btn-primary mr-2"
+              (click)="addNews()">
+              Save
+            </button>
+            <button
+              *ngIf="CatKey"
+              type="button"
+              class="btn btn-primary"
+              (click)="updateNews()">
+              Update
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

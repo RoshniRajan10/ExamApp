@@ -1,0 +1,188 @@
+<section class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <h1>
+          News
+        </h1>
+      </div>
+      <div class="col-sm-12">
+        <button
+          type="button"
+          class="btn btn-primary float-right"
+          (click)="addNews()"
+        >
+          Add News
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+<div *ngIf="isDataLoaded">
+  <div class="row pull-center">
+    <div class="col-md-3 ml-3">
+      <div class="form-group">
+        <input
+          type="text"
+          class="form-control"
+          (input)="onSearchChange($event.target.value)"
+          placeholder="Search News"
+          [(ngModel)]="searchNews"
+        />
+      </div>
+    </div>
+
+    <div class="col-md-3 ml-3">
+      <form [formGroup]="newsForm" action="" class="">
+        <select
+          formControlName="categoryName"
+          (change)="changeCategory()"
+          class="form-control"
+        >
+          <option value="">Select Main Topic</option>
+          <option *ngFor="let item of MainTopicList" [ngValue]="item">{{
+            item.categoryName
+          }}</option>
+        </select>
+      </form>
+    </div>
+    <div class="col-md-3 ml-3 pull-left">
+      <div class="form-group">
+        <button
+        type="button"
+          class="btn btn-info"
+          (click)="resetFilter()"
+        >
+          Reset
+        </button>
+      </div>
+    </div>
+  </div>
+  <section class="content">
+    <div
+      class="container-fluid"
+      *ngIf="
+        allNewsList && (allNewsList | filter: searchNews).length > 0;
+        else noDataFound
+      "
+    >
+      <div class="card tex">
+        <div class="card-body p-0">
+          <div class="table-responsive table-wrapper-scroll-y my-custom-scrollbar">
+            <table class="table m-0">
+              <thead class="thead">
+                <tr *ngIf="allNewsList.length > 0">
+                  <!-- <th>#</th> -->
+                  <th class="row-color">
+                    Title &nbsp;
+                    <i
+                      class="fa fa-arrow-up arrow"
+                      (click)="onPageSortDesc()"
+                      style="cursor: pointer;"
+                    >
+                    </i
+                    >&nbsp;
+                    <i
+                      class="fa fa-arrow-down arrow"
+                      (click)="onPageSortAsc()"
+                      style="cursor: pointer;"
+                    ></i>
+                  </th>
+                  <th class="ml-3 row-color">Description</th>
+                  <th class="row-color">Action</th>
+                </tr>
+              </thead>
+              <tbody class="scrollit">
+                <tr
+                  *ngFor="let items of allNewsList
+                          | keyvalue
+                          | filter: searchNews
+                          | paginate: { itemsPerPage: itemsPerPage, currentPage: pageNo };
+                        let i = index">
+                  <td width="30%" class="text">
+                    {{ items.value.newsName }}
+                  </td>
+                  <td  
+                    width="60%"
+                    class="text"
+                    [innerHTML]="items.value.description"
+                  ></td>
+                  <td width="10%">
+                    <span
+                      (click)="
+                        onUpdateNews(
+                          items.value.categoryKey,
+                          items.value.newsKeys
+                        )
+                      "
+                      ><a
+                        data-toggle="tooltip"
+                        title="Edit this news"
+                        ><i class="fas fa-edit edit-botton mr-2"></i></a
+                    ></span>
+                    <span
+                      (click)="
+                        onDeleteNews(
+                          items.value.categoryKey,
+                          items.value.newsKeys
+                        )
+                      "
+                    >
+                      <a
+                        data-toggle="tooltip"
+                        title="Delete this news"
+                      >
+                        <i
+                          class="fa fa-trash delete-botton"
+                          aria-hidden="true"
+                        ></i></a
+                    ></span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="card-footer clearfix" 
+            *ngIf="allNewsList && allNewsList.length > 0">
+          <div class="d-flex p-2 justify-content-end">
+            <div class="mr-1">
+              <select
+                class="form-control form-control-sm"
+                [(ngModel)]="itemsPerPage"
+                >
+                <option *ngFor="let item of itemsPerPageValues" [ngValue]="item">{{
+                  item
+                }}</option>
+              </select>
+            </div>
+            <div class="mr-1">
+              <input type="number" 
+                class="input" 
+                min="0" 
+                (change)="checkPageNumber($event)"
+                (keyup)="checkPageNumber($event)"
+                [(ngModel)]="pageNoBind"
+                placeholder="Go to"
+                class="form-control form-control-sm">
+            </div>
+            <div class="mr-1">
+              <pagination-controls
+                class="float-right"
+                (pageChange)="pageNo = $event && pageNoBind = $event"
+                [maxSize]="pageMaxSize"
+                (pageBoundsCorrection)="onPageBoundsCorrection($event)">
+              </pagination-controls>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <ng-template #noDataFound>
+      <app-data-not-found [noDataMsg]="noDataMsg"></app-data-not-found>
+    </ng-template>
+  </section>
+</div>
+
+<app-common-delete [item]="deleteItem"></app-common-delete>

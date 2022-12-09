@@ -1,0 +1,303 @@
+<ngx-spinner type="ball-spin-clockwise-fade" color="#1897ff"
+  ><div style="color: white;">Loading..</div></ngx-spinner
+>
+
+<section class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <h1>
+          Month
+        </h1>
+      </div>
+      <div class="col-sm-12">
+        <button
+          type="button"
+          class="btn btn-primary float-right"
+          data-toggle="modal"
+          data-target="#showAddMonthDialog"
+        >
+          Add Month
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+<div *ngIf="isDataLoaded">
+  <div class="col-md-12">
+    <div class="row">
+      <div class="col-md-4">
+        <input
+          type="text"
+          class="form-control"
+          (input)="onSearchChange($event.target.value)"
+          placeholder="Search Month"
+          [(ngModel)]="searchMonth"
+        />
+      </div>
+      <div class="col-md-4">
+        <button
+          class="btn btn-info"
+          (click)="resetFilter()"
+          >
+            Reset
+        </button>
+      </div>
+    </div>
+  </div>
+  <section class="content mt-3">
+    <div
+      class="container-fluid"
+      *ngIf="
+        monthList && (monthList | filter: searchMonth).length > 0;
+        else noDataFound
+        ">
+      <div class="card tex">
+        <div class="card-body p-0">
+          <div class="table-responsive table-wrapper-scroll-y my-custom-scrollbar">
+            <table class="table m-0">
+              <thead class="thead">
+                <tr *ngIf="monthList.length > 0">
+                  <!-- <th>#</th> -->
+                  <th class="row-color">
+                    Month &nbsp;
+                    <i
+                      class="fa fa-arrow-up arrow"
+                      style="cursor: pointer;"
+                      (click)="onPageSortDesc()"
+                    >
+                    </i
+                    >&nbsp;
+                    <i
+                      class="fa fa-arrow-down arrow"
+                      (click)="onPageSortAsc()"
+                      style="cursor: pointer;"
+                    ></i>
+                  </th>
+                  <th class="row-color">Action</th>
+                </tr>
+              </thead>
+              <tbody class="scrollit">
+                <tr
+                  *ngFor="
+                    let item of monthList
+                      | filter: searchMonth
+                      | paginate: { itemsPerPage: itemsPerPage, currentPage: pageNo };
+                    let i = index
+                  "
+                >
+                  <!-- <td>{{ i + 1 }}</td> -->
+                  <td class="text">
+                    {{ item.monthname }}
+                  </td>
+
+                  <td>
+                    <span (click)="onUpdateUnpublish(item.$key, item.isPublished)"
+                          *ngIf="item.isPublished == true"
+                      ><a
+                        data-toggle="tooltip"
+                        title="Unpublish this month"
+                        ><i class="fas fa-eye published-botton mr-3"></i></a
+                    ></span>
+                    <span (click)="onUpdatePublish(item.$key, item.isPublished, item)"
+                          *ngIf="item.isPublished == false"
+                      ><a
+                        data-toggle="tooltip"
+                        title="Publish this month"
+                        ><i class="fas fa-eye-slash unpublished-botton mr-3"></i></a
+                    ></span>
+                    <span
+                      (click)="
+                        onUpdateMonth(
+                          item.$key,
+                          item.monthname,
+                          item.isPublished
+                        )
+                      "
+                      ><a
+                        data-toggle="tooltip"
+                        title="Edit this month"
+                        ><i class="fas fa-edit edit-botton mr-3"></i></a
+                    ></span>
+                    <span (click)="onDeleteMonth(item.$key, item.isPublished)"
+                      ><a
+                        data-toggle="tooltip"
+                        title="Delete this month"
+                      >
+                        <i
+                          class="fa fa-trash delete-botton"
+                          aria-hidden="true"
+                        ></i></a
+                    ></span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="card-footer clearfix" 
+             *ngIf="monthList && monthList.length > 0">
+          <div class="d-flex p-2 justify-content-end">
+            <div class="mr-1">
+              <select
+                class="form-control form-control-sm"
+                [(ngModel)]="itemsPerPage"
+                >
+                <option *ngFor="let item of itemsPerPageValues" [ngValue]="item">{{
+                  item
+                }}</option>
+              </select>
+            </div>
+            <div class="mr-1">
+              <input type="number" 
+                class="input" 
+                min="0" 
+                (change)="checkPageNumber($event)"
+                (keyup)="checkPageNumber($event)"
+                [(ngModel)]="pageNoBind"
+                placeholder="Go to"
+                class="form-control form-control-sm">
+            </div>
+            <div class="mr-1">
+              <pagination-controls
+                class="float-right"
+                (pageChange)="pageNo = $event && pageNoBind = $event"
+                [maxSize]="pageMaxSize"
+                (pageBoundsCorrection)="onPageBoundsCorrection($event)">
+              </pagination-controls>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <ng-template #noDataFound>
+      <app-data-not-found [noDataMsg]="noDataMsg"></app-data-not-found>
+    </ng-template>
+  </section>
+</div>
+
+<div
+  class="modal fade"
+  id="showAddMonthDialog"
+  aria-hidden="true"
+  style="display: none;"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Add Month</h4>
+        <button
+          type="button"
+          class="close"
+          data-dismiss="modal"
+          aria-label="Close"
+        >
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="monthForm">
+          <label>Month Name <span style="color: red;">*</span></label>
+          <input
+            type="text"
+            class="form-control mb-2"
+            placeholder="Month"
+            formControlName="monthname"
+            MaxLength="30"
+            required
+            [ngClass]="{
+              'is-invalid': submitted && monthform.monthname.errors
+            }"
+          />
+          <div
+            *ngIf="submitted && monthform.monthname.errors"
+            class="invalid-feedback"
+          >
+            <div *ngIf="monthform.monthname.errors.required">
+              Month is required
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <button
+              class="btn btn-secondary"
+              (click)="onDialogClose('showAddMonthDialog')"
+            >
+              Cancel
+            </button>
+            <button type="submit" class="btn btn-primary" (click)="addMonth()">
+              Save
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div
+  class="modal fade"
+  id="showUpdateMonthDialog"
+  aria-hidden="true"
+  style="display: none;"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Update Month</h4>
+        <button
+          type="button"
+          class="close"
+          data-dismiss="modal"
+          aria-label="Close"
+        >
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="monthForm" action="">
+          <input
+            type="text"
+            class="form-control mb-2"
+            placeholder="Month"
+            id="parent"
+            formControlName="monthname"
+            required
+            autofocus
+            [ngClass]="{
+              'is-invalid': submitted && monthform.monthname.errors
+            }"
+          />
+          <div
+            *ngIf="submitted && monthform.monthname.errors"
+            class="invalid-feedback"
+          >
+            <div *ngIf="monthform.monthname.errors.required">
+              Month is required
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <div class="modal-footer">
+        <button
+          class="btn btn-secondary"
+          (click)="onDialogClose('showUpdateMonthDialog')"
+        >
+          Cancel
+        </button>
+        <button
+          type="submit"
+          class="btn btn-primary"
+          (click)="updateMonth(selectedId, isPublished)"
+        >
+          Update
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<app-common-publish [item]="publishItem"></app-common-publish>
+<!-- <app-common-publish-without-notification [item]="publishItem"></app-common-publish-without-notification> -->
+<app-common-unpublish [item]="unPublishItem"></app-common-unpublish>
+<app-common-delete [item]="deleteItem"></app-common-delete>

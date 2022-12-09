@@ -1,0 +1,30 @@
+<ngx-spinner type="ball-spin-clockwise-fade" color="#1897ff">
+    <div style="color: white;">Loading..</div>
+</ngx-spinner>
+<div class="modal-body">
+    <form [formGroup]="practicesForm">
+        <div class="row mt-2">
+            <div class="col-12">
+                <ng-select2 
+                    [(ngModel)]="selectedItems" 
+                    [data]="PracticeItems"
+                    [options]="options"
+                    [width]="1000"
+                    formControlName="practicesCtrl">
+                </ng-select2>
+            </div>
+        </div>
+    </form>
+</div>
+<div class="modal-footer">
+    <button
+    type="button"
+    id="saveImage"
+    class="btn btn-primary"
+    data-dismiss="modal"
+    role="button"
+    (click)="savePractices()"
+    >
+    Save
+    </button>
+</div>

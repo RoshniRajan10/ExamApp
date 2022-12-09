@@ -1,0 +1,129 @@
+<div
+cdkDropList
+cdkDropListOrientation="horizontal"
+[cdkDropListData]="videosHighlighted"
+(cdkDropListDropped)="onDrop($event, orderStatus)"
+class="row card-group">
+  <div 
+  class="col-md-3"
+  cdkDrag
+  cdkDragLockAxis="x"
+  [cdkDragData] = "item.order"
+  *ngFor="let item of videosHighlighted">
+    <div class="card card-outline card-success">
+      <div class="card-header">
+        <div class="card-tools">
+          <button type="button" class="btn btn-tool btn-sm btn-primary mr-1" title="Click to Change"
+            (click)="changeVideo(item.$key,item.order)"><i class="fas fa-pencil-alt"></i>
+          </button>
+          <button type="button" class="btn btn-tool btn-sm btn-danger" title="Click to Remove"
+            (click)="onRemoveVideo(item.$key)"><i class="fa fa-trash"></i>
+          </button>
+        </div>
+        <!-- /.card-tools -->
+      </div>
+      <!-- /.card-header -->
+      <div class="card-body">
+        <button type="button" (click)="playVideo(item.data.embedUrl)" class="btn" data-toggle="modal"
+          data-target="#modalId">
+          <a data-toggle="tooltip" style="border: none;" title="Click here to play this video">
+            <i aria-hidden="true" style="cursor: pointer; color: indianred;">
+              <img [src]="item.data.thumbnail_url ? item.data.thumbnail_url
+                      : 'assets/img/youtube-default_2.jpg'
+                  " height="42" width="42" style="width: 89px; height: 53px;" /> </i></a>
+        </button>
+        <p class="card-text text-truncate cursor-pointer" data-toggle="tooltip" title="{{item.data.title}}">{{item.data.title}}</p>
+      </div>
+    </div>
+    <!-- /.card -->
+  </div>
+  <!-- /.col -->
+  <div class="col-md-3" *ngIf="addVideoButton">
+    <div class="card card-outline card-success">
+      <div class="card-body">
+        <button type="button" class="btn btn-tool btn-sm btn-primary" title="Add Video"
+          (click)="addNewVideo()">Add Video
+        </button>
+      </div>
+    </div>
+    <!-- /.card -->
+  </div>
+  <!-- /.col -->
+</div>
+<div clss="row">
+  <div>
+    <button 
+    type="button" 
+    data-dismiss="modal" 
+    title="Change Order"
+    class="btn btn-primary btn-sm" 
+    *ngIf="orderStatus == false"
+    (click)="changeOrder()"
+    >
+      Change Order
+    </button>
+    <button 
+    type="button" 
+    data-dismiss="modal" 
+    title="Save Order"
+    class="btn btn-primary btn-sm" 
+    *ngIf="orderStatus == true"
+    (click)="Save()"
+    >
+      Save Order
+    </button>
+  </div>
+</div>
+<div class="modal fade" id="modalId" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">
+          Youtube video <span style="color: red;"></span>
+        </h4>
+      </div>
+      <div class="modal-body" id="modalBody"></div>
+      <div class="modal-footer">
+        <button type="button" title="Close" data-dismiss="modal" class="btn btn-default" (click)="closeModal()">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<div
+  class="modal fade"
+  id="showDeleteDialog"
+  aria-hidden="true"
+  style="display: none;"
+>
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-body">
+        <span [innerHtml]="deleteMessage"></span>
+      </div>
+      <div class="modal-footer">
+        <button
+          type="button"
+          id="delImage"
+          title="Cancel"
+          class="btn btn-secondary"
+          data-dismiss="modal"
+        >
+          Cancel
+        </button>
+        <button
+          type="button"
+          id="saveImage"
+          title="Confirm"
+          class="btn btn-primary"
+          (click)="removeVideo(deleteData)"
+          role="button"
+        >
+          Confirm
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+

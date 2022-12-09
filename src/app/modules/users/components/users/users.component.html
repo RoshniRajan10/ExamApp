@@ -1,0 +1,424 @@
+<ngx-spinner type="ball-spin-clockwise-fade" color="#1897ff"
+  ><div style="color: white;">Loading..</div></ngx-spinner
+>
+
+<section class="content-header">
+  <div
+    class="container-fluid mb-4"
+    *ngIf="allUserList && (allUserList | filter: searchUser).length > 0"
+  >
+    <div class="row">
+      <div class="col-sm-6">
+        <h1>Users</h1>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="col-md-12">
+  <div class="row">
+    <div class="col-md-4">
+      <input
+        type="text"
+        class="form-control"
+        (input)="onSearchChange($event.target.value)"
+        placeholder="Search User"
+        [(ngModel)]="searchUser"
+      />
+    </div>
+    <div class="col-md-3">
+      <button
+        class="btn btn-info"
+        (click)="resetFilter()"
+      >
+        Reset
+      </button>
+    </div>
+    <div class="col-md-4">
+      <form [formGroup]="userFormAD" action="" class="">
+        <select
+          formControlName="userStatus"
+          (change)="filterUser()"
+          class="form-control"
+        >
+          <option value="">All Users</option>
+          <option value="1">Active</option>
+          <option value="2">Inactive</option>
+          <option value="3">Deleted</option>
+        </select>
+      </form>
+    </div>
+  </div>
+</div>
+<section class="content mt-3">
+  <div
+    class="container-fluid"
+    *ngIf="
+      allUserList && (allUserList | filter: searchUser).length > 0;
+      else noDataFound
+    "
+  >
+    <div class="card">
+      <div class="card-body p-0">
+        <div class="table-responsive table-wrapper-scroll-y my-custom-scrollbar">
+          <table class="table m-0">
+            <thead class="thead">
+              <tr>
+                <th class="row-color">Phone Number</th>
+                <th class="row-color">Nick Name</th>
+                <th class="row-color" *ngIf="userStatus != 3">Status</th>
+                <th class="row-color text-left">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                *ngFor="
+                  let item of allUserList
+                    | filter: searchUser
+                    | paginate: { itemsPerPage: itemsPerPage, currentPage: pageNo }
+                "
+              >
+                <td style="width: 20%;">
+                  {{ item.userDetails?.mobile || '' }}
+                </td>
+                <td style="width: 20%;">{{ item.userDetails?.nickName }}</td>
+                <td align="left" class="cursor-pointer" style="width: 20%;" *ngIf="userStatus != 3">
+                  <button
+                    type="button"
+                    class="btn icon-btn-success btn-sm "
+                    *ngIf="item.isActive == true"
+                    style="color: #45b6af;"
+                    (click)="
+                      changeActiveStatus(
+                        item.$key,
+                        item.userDetails.mobile,
+                        item.isActive
+                      )
+                    "
+                  >
+                    <i class="fa fa-times-circle" style="color: #ce4d4f;" aria-hidden="true" title="click to Deactivate"></i>
+                    Active User
+                  </button>
+                  <button
+                    type="button"
+                    *ngIf="item.isActive == false"
+                    class="btn icon-btn-warning btn-sm"
+                    style="color: #ce4d4f;"
+                    (click)="
+                      changeActiveStatus(
+                        item.$key,
+                        item.userDetails.mobile,
+                        item.isActive
+                      )
+                    "
+                  >
+                    <i class="fa fa-check-circle" style="color: #45b6af;" aria-hidden="true" title="click to activate"></i>
+                    Inactive User
+                  </button>
+                </td>
+                <td class="cursor-pointer" style="width: 20%;">
+                  <button
+                    type="button"
+                    class="btn icon-btn-primary btn-sm mr-4"
+                    (click)="getCourses(item.$key,item.userDetails.mobile,item.userDetails.nickName)"
+                    title="View Course"
+                    style="color:green"
+                  >
+                    <i class="fas fa-graduation-cap"></i>
+                  </button>
+                  <button
+                    type="button"
+                    class="btn icon-btn-primary btn-sm mr-4"
+                    (click)="addCourse(item.$key,item.userDetails)"
+                    title="Add Course"
+                    style="color: gray;"
+                  >
+                    <i class="fa fa-plus-circle" aria-hidden="true"></i>
+                  </button>
+                  <button *ngIf="(item.userState!==undefined && item.userState == 0)"
+                    type="button"
+                    class="btn icon-btn-primary btn-sm mr-4"
+                    (click)="onRestoreUser(item.$key)"
+                    title="Re store"
+                    style="color: rgb(3, 141, 38);"
+                  >
+                    <i class="fas fa-recycle" aria-hidden="true"></i>
+                  </button>
+                  <button *ngIf="(item.userState===undefined || item.userState == 1)"
+                    type="button"
+                    class="btn icon-btn-primary btn-sm mr-4"
+                    (click)="onDeleteUser(item.$key,item.isActive)"
+                    title="Delete"
+                    style="color: indianred;"
+                  >
+                    <i class="fa fa-trash" aria-hidden="true"></i>
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="card-footer clearfix" 
+            *ngIf="allUserList && allUserList.length > 0">
+          <div class="d-flex p-2 justify-content-end">
+            <div class="mr-1">
+              <select
+                class="form-control form-control-sm"
+                [(ngModel)]="itemsPerPage"
+                >
+                <option *ngFor="let item of itemsPerPageValues" [ngValue]="item">{{
+                  item
+                }}</option>
+              </select>
+            </div>
+            <div class="mr-1">
+              <input type="number" 
+                class="input" 
+                min="0" 
+                (change)="checkPageNumber($event)"
+                (keyup)="checkPageNumber($event)"
+                [(ngModel)]="pageNoBind"
+                placeholder="Go to"
+                class="form-control form-control-sm">
+            </div>
+            <div class="mr-1">
+              <pagination-controls
+                class="float-right"
+                (pageChange)="pageNo = $event && pageNoBind = $event"
+                [maxSize]="pageMaxSize"
+                (pageBoundsCorrection)="onPageBoundsCorrection($event)">
+              </pagination-controls>
+            </div>
+          </div>
+        </div>
+    </div>
+  </div>
+  <ng-template #noDataFound>
+    <app-data-not-found [noDataMsg]="noDataMsg"></app-data-not-found>
+  </ng-template>
+</section>
+
+<div
+  class="modal fade"
+  id="showPrimeDialog"
+  tabindex="-1"
+  role="dialog"
+  aria-modal="true"
+>
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-body text-center mt-3" *ngIf="isPrimeUsers == 'Prime'">
+        <h3>
+          Are you sure you want to de-activate from prime user with phone number
+          {{ mobileno }} ?
+        </h3>
+      </div>
+      <div
+        class="modal-body text-center mt-3"
+        *ngIf="isPrimeUsers == 'Non Prime'"
+      >
+        <h3>
+          Are you sure you want to activate from prime user with phone number
+          {{ mobileno }} ?
+        </h3>
+      </div>
+      <div class="modal-footer">
+        <button
+          *ngIf="isPrimeUsers == 'Non Prime'"
+          type="button"
+          id="saveImage"
+          class="btn btn-primary btn btn-hover-green px-3 ml-4"
+          role="button"
+          (click)="activatePrime(userkeys, isPrimeUsers)"
+          style="margin-right: 165px;"
+        >
+          Activate Prime
+        </button>
+        <button
+          *ngIf="isPrimeUsers == 'Prime'"
+          type="button"
+          id="saveImage"
+          class="btn btn-primary btn btn-hover-green px-3 ml-4"
+          role="button"
+          (click)="deActivatePrime(userkeys, isPrimeUsers)"
+          style="margin-right: 165px;"
+        >
+          De-Activate Prime
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div
+  class="modal fade"
+  id="showActivateDialog"
+  tabindex="-1"
+  role="dialog"
+  aria-modal="true"
+>
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-body text-center mt-3" *ngIf="isActives == true">
+        <h3>
+          Are you sure you want to de-activate user with phone number
+          {{ mobileno }} ?
+        </h3>
+      </div>
+      <div class="modal-body text-center mt-3" *ngIf="isActives == false">
+        <h3>
+          Are you sure you want to activate user with phone number
+          {{ mobileno }} ?
+        </h3>
+      </div>
+      <div class="modal-footer">
+        <button
+          *ngIf="isActives == false"
+          type="button"
+          id="saveImage"
+          class="btn btn-primary btn btn-hover-green px-3 ml-4"
+          role="button"
+          (click)="activateActiveStatus(userkeys, isActives)"
+          style="margin-right: 184px;"
+        >
+          Activate
+        </button>
+        <button
+          *ngIf="isActives == true"
+          type="button"
+          id="saveImage"
+          class="btn btn-primary btn btn-hover-green px-3 ml-4"
+          role="button"
+          (click)="deActivateActiveStatus(userkeys, isActives)"
+          style="margin-right: 171px;"
+        >
+          De-Activate
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- <h3>{{addCourseItems.courses.length}}</h3> -->
+<div
+  class="modal fade"
+  id="addCourse"
+  tabindex="-1"
+  role="dialog"
+  aria-modal="true"
+>
+  
+  <app-add-topic [user]="addCourseItems" ></app-add-topic>
+</div>
+<div
+  class="modal fade"
+  id="showCourses"
+  tabindex="-1"
+  role="dialog"
+  aria-modal="true"
+>
+  <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+    <div class="card" style="width: 100%">
+      <div class="card-header">
+        <div class="d-flex justify-content-between">
+          <h2 class="modal-title">Selected Courses</h2>
+          <button type="button" (click)="onDialogClose('showCourses')" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+      </div>
+      <div class="card-body">
+        <div *ngIf="record; else elseBlock">
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item">
+              <div class="d-flex justify-content-between mb-3">
+                <Label><strong>User: </strong>{{nickNameForSC}}</Label>
+                <Label><strong>Phone Nmber: </strong>{{mobileForSC}}</Label>
+              </div>
+              <div class="d-flex bd-highlight">
+                <div class="bd-highlight">
+                  <Label class="mr-3"><strong>Courses: </strong></Label>
+                </div>
+                <div class="flex-grow-1 bd-highlight">
+                  <span class="badge badge-secondary mr-1 course-style mb-1" *ngFor="let item of courses">
+                    <h5>{{item.categoryName}}</h5>
+                  </span>
+                </div>
+              </div>
+              <!-- <div class="d-flex flex-wrap mb-3">
+                
+                <button type="button" class="btn btn-success">Success <span class="badge">3</span></button>
+                <button type="button" class="btn btn-success">Success <span class="badge">3</span></button>
+                <button type="button" class="btn btn-success">Success <span class="badge">3</span></button>
+                <button type="button" class="btn btn-success">Success <span class="badge">3</span></button>
+                <button type="button" class="btn btn-success">Success <span class="badge">3</span></button>
+                <button type="button" class="btn btn-success">Success <span class="badge">3</span></button>
+                <button type="button" class="btn btn-success">Success <span class="badge">3</span></button>
+                <button type="button" class="btn btn-success">Success <span class="badge">3</span></button>
+                <button type="button" class="btn btn-success">Success <span class="badge">3</span></button>
+                <button type="button" class="btn btn-success">Success <span class="badge">3</span></button>
+                <button type="button" class="btn btn-success">Success <span class="badge">3</span></button>
+                <button type="button" class="btn btn-success">Success <span class="badge">3</span></button>
+                <button type="button" class="btn btn-success">Success <span class="badge">3</span></button>
+                <button type="button" class="btn btn-success">Success <span class="badge">3</span></button>
+                <button type="button" class="btn btn-success">Success <span class="badge">3</span></button>
+                <button type="button" class="btn btn-success">Success <span class="badge">3</span></button>
+                <button type="button" class="btn btn-success">Success <span class="badge">3</span></button>
+                <button type="button" class="btn btn-success">Success <span class="badge">3</span></button>
+                <button type="button" class="btn btn-success">Success <span class="badge">3</span></button>
+                <button type="button" class="btn btn-success">Success <span class="badge">3</span></button>
+                <button type="button" class="btn btn-success">Success <span class="badge">3</span></button>
+                <button type="button" class="btn btn-success">Success <span class="badge">3</span></button>
+                <button type="button" class="btn btn-success">Success <span class="badge">3</span></button>
+                <button type="button" class="btn btn-success">Success <span class="badge">3</span></button>
+                <button type="button" class="btn btn-success">Success <span class="badge">3</span></button>
+                <button type="button" class="btn btn-success">Success <span class="badge">3</span></button>
+                <button type="button" class="btn btn-success">Success <span class="badge">3</span></button>
+                <button type="button" class="btn btn-success">Success <span class="badge">3</span></button>
+                <button type="button" class="btn btn-success">Success <span class="badge">3</span></button>
+                <button type="button" class="btn btn-success">Success <span class="badge">3</span></button>
+                <button type="button" class="btn btn-success">Success <span class="badge">3</span></button>
+                <button type="button" class="btn btn-success">Success <span class="badge">3</span></button>
+                <button type="button" class="btn btn-success">Success <span class="badge">3</span></button>
+                 
+              </div>-->
+            </li>
+          </ul>
+        </div>
+        <ng-template #elseBlock>
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item">
+              <div class="d-flex justify-content-center col-12 mb-3">
+                <span><h3>{{noCourse}}</h3></span>
+              </div>
+            </li>
+          </ul>
+        </ng-template>
+    </div>
+    </div>
+    <!-- <div class="modal-content">
+      <div class="modal-header">
+        <div class="col-md-6">
+          <Label><strong>User: </strong>{{nickNameForSC}}</Label>
+        </div>
+        <div class="col-md-6">
+          <Label><strong>Phone Nmber: </strong>{{mobileForSC}}</Label>
+        </div>
+      </div>
+      <div class="modal-header">
+        <h2 class="modal-title">Selected Courses</h2>
+        <button type="button" (click)="onDialogClose('showCourses')" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body text-center mt-3">
+        <div *ngIf="record; else elseBlock">
+          <span class="badge badge-secondary mr-1 course-style mb-1" *ngFor="let item of courses"><h3>{{item.categoryName}}</h3></span>
+        </div>
+        <ng-template #elseBlock><span><h3>{{noCourse}}</h3></span></ng-template>
+      </div>
+    </div> -->
+  </div>
+</div>
+
+<app-common-delete [item]="deleteItem"></app-common-delete>
+<app-common-restore [item]="restoreItem"></app-common-restore>

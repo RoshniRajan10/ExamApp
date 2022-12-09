@@ -1,0 +1,80 @@
+<div
+  class="modal fade"
+  id="modal-update-publish"
+  aria-hidden="true"
+  style="display: none;"
+>
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-body text-center mb-3">
+        <h2 *ngIf="item">{{ item.displayMessage }}</h2>
+      </div>
+      <div>
+        <form [formGroup]="notificationForm" action="" class="mt-1">
+          <div class="col-12">
+            <div class="form-group">
+              <div class="checkbox">
+                <label>
+                  <input
+                    class="mr-2"
+                    type="checkbox"
+                    name="noti_check"
+                    [checked]="checked"
+                    (change)="checkNotification($event)"
+                  />
+                  Please check for sending the notification.
+                </label>
+              </div>
+            </div>
+          </div>
+          <div class="col-12 mb-3" *ngIf="msgtitle">
+            <label>Title <span style="color: red;">*</span></label>
+            <input
+              class="form-control"
+              type="text"
+              formControlName="notificationtitle"
+              required
+              [ngClass]="{
+                'is-invalid': submitted && notificationform.notificationtitle.errors
+              }"
+            />
+            <div
+              *ngIf="submitted && notificationform.notificationtitle.errors"
+              class="invalid-feedback"
+            >
+              <div *ngIf="notificationform.notificationtitle.errors.required">
+                Title is required
+              </div>
+            </div>
+          </div>
+          <div class="col-12" *ngIf="msgtitle">
+            <label>Message<span style="color: red;">*</span></label>
+            <textarea
+              class="form-control"
+              formControlName="notificationmessage"
+              rows="6"
+            ></textarea>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          data-dismiss="modal"
+          role="button"
+          (click)="cancelPublish()"
+        >
+          Cancel
+        </button>
+        <button
+          type="button"
+          class="btn btn-primary"
+          (click)="updatePublishItem(item.section, item.sectionItems)"
+        >
+          Publish
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

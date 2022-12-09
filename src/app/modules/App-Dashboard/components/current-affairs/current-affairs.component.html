@@ -1,0 +1,47 @@
+<div class="card card-primary card-outline">
+    <div class="card-header">
+        <h3 class="card-title">Current Affairs</h3>
+    </div>
+    <div class="card-body">
+        <form [formGroup]="currentAffairsForm" action="">
+        <div class="row">
+            <div class="col-4 mt-4">
+              <label>Current Affairs in List</label>
+            </div>
+            <div class="col-6">
+              <input
+                type="number"
+                [min]="1"
+                class="form-control mb-2 mt-3"
+                placeholder="Current Affairs in List"
+                formControlName="cuInList"
+                [(ngModel)]="cuInList"
+                required
+                autofocus
+              />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-10 mt-4">
+              <div class="form-group">
+                <div class="checkbox">
+                  <label>
+                    Current Affairs as List 
+                    <input
+                      type="checkbox"
+                      [checked]="true"
+                      [(ngModel)]="caAsList"
+                      formControlName="caAsList"
+                      (change)="addexamLink($event)"
+                    />
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+    </div>
+    <div class="card-footer">
+      <Button (click)="saveCuInDashBoard()" class="btn btn-primary btn-sm ml-2">Save</Button>
+    </div>
+  </div>

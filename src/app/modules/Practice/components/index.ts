@@ -1,0 +1,7 @@
+export * from './list-practice/list-practice.component'
+export * from './add-practice/add-practice.component'
+export * from './add-practice-questions/add-practice-questions.component'
+export * from './list-practice-questions/list-practice-questions.component'
+export * from './update-practice-questions/update-practice-questions.component'
+export * from './update-practice/update-practice.component'
+export * from './select-random-questions-by-tag/select-random-questions-by-tag.component'

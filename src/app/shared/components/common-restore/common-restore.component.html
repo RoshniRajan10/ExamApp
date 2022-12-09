@@ -1,0 +1,31 @@
+<div
+  class="modal fade"
+  id="showRestoreDialog"
+  aria-hidden="true"
+  style="display: none;"
+>
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-body text-center mt-3">
+        <h2 *ngIf="item">{{ item.displayMessage }}</h2>
+      </div>
+      <div class="modal-footer">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          data-dismiss="modal"
+        >
+          Cancel
+        </button>
+        <button
+          type="button"
+          class="btn btn-primary"
+          (click)="restoreData(item.section, item.sectionItems)"
+          role="button"
+        >
+          Confirm
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

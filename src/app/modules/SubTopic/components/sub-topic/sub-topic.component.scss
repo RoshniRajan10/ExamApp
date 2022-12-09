@@ -1,0 +1,14 @@
+.modal-header {
+  border-bottom: 0px solid #e9ecef !important;
+}
+.modal-footer {
+  border-top: 0px solid #e9ecef;
+}
+.scrollit {
+  overflow: scroll;
+  height: 100px;
+}
+.modal-backdrop {
+  /* bug fix - no overlay */
+  display: none;
+}

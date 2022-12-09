@@ -1,0 +1,60 @@
+<body
+  style="
+    height: 711px;
+    margin-top: -56px;
+    background-image: linear-gradient(
+        to bottom,
+        rgba(163, 117, 117, 0.04),
+        #7a0c30
+      ),
+      url('../../../../../assets/img/img-01.png') !important;
+  "
+>
+  <div class="container" style="padding-top: 123px;">
+    <div
+      class="card card-container"
+      style="max-width: 277px; background-color: cornflowerblue;"
+    >
+      <img id="profile-img" class="profile-img-card" src="//ssl.gstatic.com/accounts/ui/avatar_2x.png" />
+      <p id="profile-name" class="profile-name-card"></p>
+      <form class="form-signin" [formGroup]="loginForm" (ngSubmit)="login()">
+        <span id="reauth-email" class="reauth-email"></span>
+
+        <input
+          formControlName="email"
+          type="email"
+          class="form-control"
+          placeholder="Email"
+          required
+          [class.is-invalid]="
+            loginForm.get('email').invalid && loginForm.get('email').touched
+          "
+        />
+
+        <input
+          formControlName="password"
+          type="Password"
+          class="form-control"
+          placeholder="Password"
+          required
+          [class.is-invalid]="
+            loginForm.get('password').invalid &&
+            loginForm.get('password').touched
+          "
+        />
+        <button
+          class="btn btn-lg btn-primary btn-block btn-signin"
+          type="submit"
+          style="background-color: blue;"
+          [disabled]="isSubmit"
+        >
+          Sign in
+          <i class="fa fa-spinner fa-spin" *ngIf="isSubmit"></i>
+        </button>
+      </form>
+      <!-- /form -->
+    </div>
+    <!-- /card-container -->
+  </div>
+  <!-- /container -->
+</body>

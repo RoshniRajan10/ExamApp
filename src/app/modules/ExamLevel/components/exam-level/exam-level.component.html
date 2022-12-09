@@ -1,0 +1,363 @@
+<ngx-spinner type="ball-spin-clockwise-fade" color="#1897ff"
+  ><div style="color: white;">Loading..</div></ngx-spinner
+>
+
+<section class="content-header">
+  <div class="container-fluid" style="padding-left: 7px !important;">
+    <div class="row mb-2">
+      <div class="col-md-6 mt-3">
+        <h1>Exam Level</h1>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="row ml-0 mb-3">
+  <div class="col-md-6" *ngIf="examLevelList.length > 0">
+    <span class="font-weight-bold"
+      >Note : Level starts from 0 - n and ensure no gap in level.</span
+    ><br />
+    <span class="font-weight-bold"
+      >Warning : Deleting a level will erase all exams in it.</span
+    >
+  </div>
+  <div class="col-md-6" *ngIf="examLevelList.length === 0"></div>
+  <div class="col-md-6">
+    <button
+      type="button"
+      class="btn btn-primary float-right mr-3"
+      data-toggle="modal"
+      data-target="#showAddExamLevelDialog"
+    >
+      Add Exam Level
+    </button>
+  </div>
+</div>
+<section class="content">
+  <div
+    class="container-fluid"
+    class="container-fluid"
+    *ngIf="examLevelList && examLevelList.length > 0; else noDataFound"
+  >
+    <div class="card tex">
+      <div class="card-body p-0">
+        <div class="table-responsive table-wrapper-scroll-y my-custom-scrollbar">
+          <table class="table m-0">
+            <thead class="thead">
+              <tr *ngIf="examLevelList.length > 0">
+                <!-- <th>#</th> -->
+                <th class="row-color">
+                  Level Name &nbsp;
+                  <i
+                    class="fa fa-arrow-up arrow"
+                    style="cursor: pointer;"
+                    (click)="onPageSortDesc()"
+                  >
+                  </i
+                  >&nbsp;
+                  <i
+                    class="fa fa-arrow-down arrow"
+                    style="cursor: pointer;"
+                    (click)="onPageSortAsc()"
+                  ></i>
+                </th>
+                <th class="row-color">Level No</th>
+                <th class="row-color">Level Thumb</th>
+                <th class="row-color">Action</th>
+              </tr>
+            </thead>
+            <tbody class="scrollit">
+              <tr
+                *ngFor="
+                  let item of examLevelList
+                    | paginate: { itemsPerPage: itemsPerPage, currentPage: pageNo };
+                  let i = index
+                "
+              >
+                <!-- <td>{{ i + 1 }}</td> -->
+                <td class="text">
+                  {{ item.levelName }}
+                </td>
+                <td class="text">{{ item.levelValue }}</td>
+                <td>
+                  <img
+                    src="{{ item.levelThumb }}"
+                    class="rounded-circle"
+                    alt=""
+                    width="30"
+                    height="30"
+                  />
+                </td>
+                <!--  -->
+                <td>
+                  <span (click)="onUpdateExamLevel(item.$key)"
+                    ><a data-toggle="tooltip" title=" Edit this exam level" class="mr-3"
+                      ><i class="fas fa-edit edit-botton"></i></a
+                  ></span>
+                  <span (click)="onDeleteExamLevel(item.$key)"
+                    ><a data-toggle="tooltip" title="Delete this exam level">
+                      <i class="fa fa-trash delete-botton"></i></a
+                  ></span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="card-footer clearfix" 
+           *ngIf="examLevelList && examLevelList.length > 0">
+          <div class="d-flex p-2 justify-content-end">
+            <div class="mr-1">
+              <select
+                class="form-control form-control-sm"
+                [(ngModel)]="itemsPerPage"
+                >
+                <option *ngFor="let item of itemsPerPageValues" [ngValue]="item">{{
+                  item
+                }}</option>
+              </select>
+            </div>
+            <div class="mr-1">
+              <input type="number" 
+                class="input" 
+                min="0" 
+                (change)="checkPageNumber($event)"
+                (keyup)="checkPageNumber($event)"
+                [(ngModel)]="pageNoBind"
+                placeholder="Go to"
+                class="form-control form-control-sm">
+            </div>
+            <div class="mr-1">
+              <pagination-controls
+                class="float-right"
+                (pageChange)="pageNo = $event && pageNoBind = $event"
+                [maxSize]="pageMaxSize"
+                (pageBoundsCorrection)="onPageBoundsCorrection($event)">
+              </pagination-controls>
+            </div>
+          </div>
+        </div>
+    </div>
+  </div>
+</section>
+<ng-template #noDataFound>
+  <app-data-not-found [noDataMsg]="noDataMsg"></app-data-not-found>
+</ng-template>
+<div
+  class="modal fade"
+  id="showAddExamLevelDialog"
+  aria-hidden="true"
+  style="display: none;"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Add Exam Level</h4>
+        <button
+          type="button"
+          class="close"
+          data-dismiss="modal"
+          aria-label="Close"
+        >
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <form [formGroup]="ExamLevelForm">
+          <div class="row">
+            <div class="col-4 mt-4">
+              <label>Exam Level <span style="color: red;">*</span></label>
+            </div>
+            <div class="col-6">
+              <input
+                type="text"
+                class="form-control mb-2 mt-3"
+                placeholder="Level name"
+                formControlName="levelName"
+                required
+                autofocus
+                [ngClass]="{
+                  'is-invalid': submitted && levelform.levelName.errors
+                }"
+              />
+              <div
+                *ngIf="submitted && levelform.levelName.errors"
+                class="invalid-feedback"
+              >
+                <div *ngIf="levelform.levelName.errors.required">
+                  Level Name is required
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-4 mt-4">
+              <label>Image <span style="color: red;">*</span></label>
+            </div>
+            <div class="col-6 mt-4">
+              <input
+                type="file"
+                name="levelThumb"
+                (change)="uploadLevelImage($event)"
+                [ngClass]="{
+                  'is-invalid': submitted && levelform.levelThumb.errors
+                }"
+                style="overflow: hidden;"
+              />
+              <input type="hidden" name="" formControlName="levelThumb" />
+              <input
+                type="hidden"
+                required
+                name=""
+                formControlName="levelThumbName"
+                style="
+                  border: none;
+                  background-color: white;
+                  margin-right: 78px;
+                "
+              />
+              <div
+                *ngIf="submitted && levelform.levelThumb.errors"
+                class="invalid-feedback"
+              >
+                <div *ngIf="levelform.levelThumb.errors.required">
+                  Level Image is required
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <button
+              class="btn btn-secondary"
+              (click)="onDialogClose('showAddExamLevelDialog')"
+            >
+              Cancel
+            </button>
+            <button
+              [disabled]="levelUpload == true"
+              type="button"
+              class="btn btn-primary"
+              (click)="addExamLevel()"
+            >
+              Save
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div
+  class="modal fade"
+  id="showUpdatelevelDialog"
+  aria-hidden="true"
+  style="display: none;"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Update Exam Level</h4>
+        <button
+          type="button"
+          class="close"
+          data-dismiss="modal"
+          aria-label="Close"
+        >
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="ExamLevelForm">
+          <div class="row">
+            <div class="col-4 mt-4">
+              <label>Exam Level <span style="color: red;">*</span></label>
+            </div>
+            <div class="col-6">
+              <input
+                type="text"
+                class="form-control mb-2 mt-3"
+                placeholder="Level Name"
+                formControlName="levelName"
+                [(ngModel)]="levelName"
+                required
+                autofocus
+                [ngClass]="{
+                  'is-invalid': submitted && levelform.levelName.errors
+                }"
+              />
+              <div
+                *ngIf="submitted && levelform.levelName.errors"
+                class="invalid-feedback"
+              >
+                <div *ngIf="levelform.levelName.errors.required">
+                  Level Name is required
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-4 mt-4">
+              <label>Image <span style="color: red;">*</span></label>
+            </div>
+            <div class="col-6 mt-4">
+              <input
+                type="file"
+                name="levelThumb"
+                (change)="uploadLevelImage($event)"
+              />
+              <input
+                type="hidden"
+                name=""
+                formControlName="levelThumb"
+                required
+                [ngClass]="{
+                  'is-invalid': submitted && levelform.levelThumb.errors
+                }"
+              />
+              <input
+                type="text"
+                required
+                name=""
+                formControlName="levelThumbName"
+                style="
+                  border: none;
+                  background-color: white;
+                  margin-right: 78px;
+                "
+              />
+              <div
+                *ngIf="submitted && levelform.levelThumb.errors"
+                class="invalid-feedback"
+              >
+                <div *ngIf="levelform.levelThumb.errors.required">
+                  Level Name is required
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button
+              class="btn btn-secondary"
+              (click)="onDialogClose('showUpdatelevelDialog')"
+            >
+              Cancel
+            </button>
+            <button
+              [disabled]="levelUpload == true"
+              type="button"
+              class="btn btn-primary"
+              (click)="Update(selectedId)"
+            >
+              Update
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-common-delete [item]="deleteItem"></app-common-delete>

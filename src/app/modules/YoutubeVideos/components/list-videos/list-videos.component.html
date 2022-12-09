@@ -1,0 +1,325 @@
+<ngx-spinner type="ball-spin-clockwise-fade" color="#1897ff"
+  ><div style="color: white;">Loading..</div></ngx-spinner
+>
+<section class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-6">
+        <h1>
+          Youtube Videos
+        </h1>
+      </div>
+      <div class="col-6">
+        <button
+          type="button"
+          class="btn btn-primary float-right"
+          (click)="addVideo()"
+        >
+          Add Video
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- <app-grid-container [gridHeaders]="['Parent Topic', 'Status', 'Edit', 'Delete']" [dataSource]="parentTopicList" ></app-grid-container> -->
+<div *ngIf="isDataLoaded">
+  <div class="col-md-12">
+    <form [formGroup]="VideoForm" action="">
+      <div class="d-flex flex-row justify-content-start">
+        <div class="bd-highlight mr-2">
+          <select
+            formControlName="categoryName"
+            (change)="changeCategory()"
+            class="form-control"
+            [(ngModel)]="searchFilter.mainTopic"
+          >
+            <option *ngFor="let item of MainTopicList" [ngValue]="item">{{
+              item.categoryName
+            }}</option>
+          </select>
+        </div>
+        <div class="bd-highlight mr-2">
+          <select
+            formControlName="subCategoryName"
+            (change)="changeSubCategory()"
+            class="form-control"
+            [(ngModel)]="searchFilter.subTopic"
+          >
+            <option *ngFor="let item1 of subcatname" [ngValue]="item1">{{
+              item1.subCategory
+            }}</option>
+          </select>
+        </div>
+        <div class="bd-highlight mr-2">
+          <select
+            formControlName="chapterName"
+            (change)="changeChapter()"
+            class="form-control"
+            [(ngModel)]="searchFilter.chapter"
+          >
+            <option *ngFor="let items of chapterItems" [ngValue]="items">{{
+              items.chapterName
+            }}</option>
+          </select>
+        </div>
+        <div class="bd-highlight mr-2">
+          <button class="btn btn-info" (click)="resetFilter()">
+            Reset
+          </button>
+        </div>
+        <div class="ml-auto bd-highlight">
+          <button
+            *ngIf="orderStatus == false"
+            type="button"
+            class="btn btn-primary"
+            (click)="changeOrder()"
+          >
+            Change Order 
+          </button>
+          <button
+            *ngIf="orderStatus == true"
+            type="button"
+            class="btn btn-primary"
+            (click)="Save()"
+          >
+            Save
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+  <section class="content mt-3">
+    <div
+      class="container-fluid"
+      *ngIf="allVideoItems && allVideoItems.length > 0; else noDataFound"
+    >
+      <div class="card tex">
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table m-0" width="100%">
+              <thead>
+                <tr *ngIf="allVideoItems.length > 0">
+                  <th class="row-color">
+                    Title 
+                    <i
+                      class="fa fa-arrow-up arrow mr-2"
+                      style="cursor: pointer;"
+                      (click)="onPageSortDesc()"
+                    >
+                    </i>
+                    <i
+                      class="fa fa-arrow-down arrow cursor-pointer"
+                      style="cursor: pointer;"
+                      (click)="onPageSortAsc()"
+                    ></i>
+                  </th>
+                  <th class="row-color">Chapter name</th>
+                  <th class="row-color"></th>
+                  <th class="row-color"></th>
+                  <th class="row-color">
+                    Action
+                  </th>
+                </tr>
+              </thead>
+              <tbody
+                cdkDropList                
+                [cdkDropListData]="allVideoItems"
+                (cdkDropListDropped)="onDrop($event, orderStatus)"
+              >
+                <tr
+                  cdkDrag
+                  cdkDragLockAxis="y"
+                  *ngFor="
+                    let item of allVideoItems | paginate: { 
+                        itemsPerPage: itemsPerPage, 
+                        currentPage: pageNo 
+                      };
+                      let i = index;"
+                    
+                    [cdkDragData] = "item.order">
+                  <td class="text">
+                    {{ item.title }}
+                  </td>
+                  <td class="text">
+                    {{ item.chapterName }}
+                  </td>
+                  <td>
+                    <button
+                      type="button"
+                      (click)="playVideo(item.embedUrl)"
+                      class="btn"
+                      data-toggle="modal"
+                      data-target="#modalId"
+                    >
+                      <a
+                        data-toggle="tooltip"
+                        style="border: none;"
+                        title="Click here to play this video"
+                      >
+                        <i
+                          aria-hidden="true"
+                          style="cursor: pointer; color: indianred;"
+                        >
+                          <img
+                            [src]="
+                              item.thumbnail_url
+                                ? item.thumbnail_url
+                                : 'assets/img/youtube-default_2.jpg'
+                            "
+                            height="42"
+                            width="42"
+                            style="width: 89px; height: 53px;"
+                          /> </i
+                      ></a>
+                    </button>
+                  </td>
+                  <td>
+                    <span style="cursor: pointer;" *ngIf="item.isPremium == true" class="mr-1">
+                      <a
+                        data-toggle="tooltip"
+                        title="Premium Content"
+                        ><i class="fas fa-dollar-sign isPremium-icon"></i></a
+                    ></span>
+                  </td>
+                  <td>
+                    <div class="btn-toolbar mb-3" role="toolbar" aria-label="Toolbar with button groups">
+                      <div class="btn-group mr-2" role="group" aria-label="First group">
+                        <span
+                          (click)="onUpdateUnpublish(item.videokey, item.isPublished)"
+                          *ngIf="item.isPublished == true"
+                          class="mr-2"
+                          ><a
+                            data-toggle="tooltip"
+                            title="Unpublish this video"
+                            ><i class="fas fa-eye published-botton"></i></a
+                        ></span>
+                        <span *ngIf="item.isPublished == false"
+                              (click)="onUpdatePublish(item.videokey, item.isPublished, item)"
+                              class="mr-2"
+                          ><a
+                            data-toggle="tooltip"
+                            title="Publish this video"
+                            ><i class="fas fa-eye-slash unpublished-botton"></i></a
+                        ></span>
+                        <span
+                            class="mr-2"
+                            (click)="
+                              onEdit(
+                                item.categoryKey,
+                                item.subCategoryKey,
+                                item.chapterKey,
+                                item.videokey,
+                                item.videosInchapterKey,
+                                item.embedUrl,
+                                item.title,
+                                item.isPublished,
+                                item.thumbnail_url,
+                                item.author_url,
+                                item.video_id,
+                                item.isPremium
+                              )
+                            "
+                          ><a
+                            data-toggle="tooltip"
+                            title="Edit this video"
+                            ><i class="fa fa-edit edit-botton"></i></a
+                        ></span>
+                        <span
+                            class="mr-2"
+                            (click)="
+                              onDeleteVideo(
+                                item.categoryKey,
+                                item.subCategoryKey,
+                                item.chapterKey,
+                                item.videokey,
+                                item.videosInchapterKey,
+                                item.isPublished
+                              )
+                            ">
+                            <a
+                            data-toggle="tooltip"
+                            title="Delete this video">
+                            <i
+                              class="fa fa-trash delete-botton"
+                              aria-hidden="true"
+                            ></i></a
+                        ></span>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+              <div class="modal fade" id="modalId" role="dialog">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h4 class="modal-title">
+                        Youtube video <span style="color: red;"></span>
+                      </h4>
+                    </div>
+
+                    <div class="modal-body" id="modalBody"></div>
+
+                    <div class="modal-footer">
+                      <button
+                        type="button"
+                        data-dismiss="modal"
+                        class="btn btn-default"
+                        (click)="closeModal()"
+                      >
+                        Close
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </table>
+          </div>
+        </div>
+        <div class="card-footer clearfix" 
+            *ngIf="allVideoItems && allVideoItems.length > 0">
+          <div class="d-flex p-2 justify-content-end">
+            <div class="mr-1">
+              <select
+                class="form-control form-control-sm"
+                [(ngModel)]="itemsPerPage"
+                >
+                <option *ngFor="let item of itemsPerPageValues" [ngValue]="item">{{
+                  item
+                }}</option>
+              </select>
+            </div>
+            <div class="mr-1">
+              <input type="number" 
+                class="input" 
+                min="0" 
+                (change)="checkPageNumber($event)"
+                (keyup)="checkPageNumber($event)"
+                [(ngModel)]="pageNoBind"
+                placeholder="Go to"
+                class="form-control form-control-sm">
+            </div>
+            <div class="mr-1">
+              <pagination-controls
+                class="float-right"
+                (pageChange)="pageNo = $event && pageNoBind = $event"
+                [maxSize]="pageMaxSize"
+                (pageBoundsCorrection)="onPageBoundsCorrection($event)">
+              </pagination-controls>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <ng-template #noDataFound>
+      <app-data-not-found [noDataMsg]="noDataMsg"></app-data-not-found>
+    </ng-template>
+  </section>
+</div>
+
+<app-common-delete [item]="deleteItem"></app-common-delete>
+<app-common-publish [item]="publishItem"></app-common-publish>
+<!-- <app-common-publish-without-notification [item]="publishItem"></app-common-publish-without-notification> -->
+<app-common-unpublish [item]="unPublishItem"></app-common-unpublish>

@@ -1,0 +1,300 @@
+<aside #mainSidebar class="main-sidebar sidebar-dark-primary elevation-4">
+  <!-- Brand Logo -->
+  <a class="brand-link">
+    <img />
+    <img
+      src="assets/img/toplogo.png"
+      alt="AdminLTE Logo"
+      height="42"
+      width="80%"
+    />
+  </a>
+
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <nav class="mt-2">
+      <ul
+        class="nav nav-pills nav-sidebar flex-column"
+        data-widget="treeview"
+        role="menu"
+        data-accordion="false"
+      >
+        <!-- Add icons to the links using the .nav-icon class class="btn"
+             with font-awesome or any other icon font library -->
+        <li class="nav-item">
+          <a
+            [routerLink]="['/dashboard']"
+            [routerLinkActive]="['active']"
+            class="nav-link"
+          >
+            <i class="fa fa-camera-retro mr-2"></i>
+            <p>
+              DashBoard
+            </p>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            [routerLink]="['/app-dashboard']"
+            [routerLinkActive]="['active']"
+            class="nav-link"
+          >
+          <i class="fa fa-object-group mr-2"></i>
+            <p>
+              App Dashboard
+            </p>
+          </a>
+        </li>
+        <!-- <li class="nav-item">
+          <a
+            class="nav-link"
+            [routerLink]="['/users-and-roles']"
+            [routerLinkActive]="['active']"
+            class="nav-link"
+          >
+          <i class="fa fa-tools mr-2"></i>
+            <p>
+              Users and Roles
+            </p>
+          </a>
+        </li> -->
+        <li class="nav-item">
+          <a
+            [routerLink]="['/parent-topic']"
+            [routerLinkActive]="['active']"
+            class="nav-link"
+          >
+            <i class="fa fa-camera-retro mr-2"></i>
+            <p>
+              Parent Topics
+            </p>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a
+            [routerLink]="['/main-topic']"
+            [routerLinkActive]="['active']"
+            class="nav-link"
+          >
+            <i class="fa fa-th-list mr-2"></i>
+            <p>
+              Main Topics
+            </p>
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a
+            [routerLink]="['/sub-topic']"
+            [routerLinkActive]="['active']"
+            class="nav-link"
+          >
+            <i class="fa fa-th mr-2"></i>
+            <p>
+              Sub Topics
+            </p>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a
+            [routerLink]="['/chapters']"
+            [routerLinkActive]="['active']"
+            class="nav-link"
+          >
+            <i class="fa fa-book mr-2"></i>
+            <p>
+              Chapters
+            </p>
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a
+            [routerLink]="['/exam-level']"
+            [routerLinkActive]="['active']"
+            class="nav-link"
+          >
+            <i class="fa fa-tasks mr-2"></i>
+            <p>
+              Exam Levels
+            </p>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a
+            [routerLink]="['/month']"
+            [routerLinkActive]="['active']"
+            class="nav-link"
+          >
+            <i class="fa fa-plus-square mr-2"></i>
+            <p>
+              Add-Months
+            </p>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            [routerLink]="['/current-affairs']"
+            [routerLinkActive]="['active']"
+            class="nav-link"
+          >
+            <i class="fa fa-calendar mr-2"></i>
+            <p>
+              Current Affairs
+            </p>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            [routerLink]="['/exam-tips']"
+            [routerLinkActive]="['active']"
+            class="nav-link"
+          >
+            <i class="fa fa-server mr-2"></i>
+            <p>
+              Exam Tips
+            </p>
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            [routerLink]="['/News']"
+            [routerLinkActive]="['active']"
+            class="nav-link"
+          >
+            <i class="fa fa-bullhorn mr-2"></i>
+            <p>
+              News
+            </p>
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            [routerLink]="['/faq']"
+            [routerLinkActive]="['active']"
+            class="nav-link"
+          >
+            <i class="fa fa-question-circle mr-2"></i>
+            <p>
+              FAQ
+            </p>
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            [routerLink]="['/exam']"
+            [routerLinkActive]="['active']"
+            class="nav-link"
+          >
+            <i class="fa fa-list-alt mr-2"></i>
+            <p>
+              Exams
+            </p>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            [routerLink]="['/practice']"
+            [routerLinkActive]="['active']"
+            class="nav-link"
+          >
+            <i class="fa fa-list-alt mr-2"></i>
+            <p>
+              Practice
+            </p>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            [routerLink]="['/study-material']"
+            [routerLinkActive]="['active']"
+            class="nav-link"
+          >
+            <i class="fa fa-list-alt mr-2"></i>
+            <p>
+              Study Material
+            </p>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            [routerLink]="['/Youtube-videos']"
+            [routerLinkActive]="['active']"
+            class="nav-link"
+          >
+            <i class="fa fa-play mr-2"></i>
+            <p>
+              YouTube Videos
+            </p>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            [routerLink]="['/upload-excel']"
+            [routerLinkActive]="['active']"
+            class="nav-link"
+          >
+            <i class="fa fa-upload mr-2"></i>
+            <p>
+              Upload File
+            </p>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            [routerLink]="['/users']"
+            [routerLinkActive]="['active']"
+            class="nav-link"
+          >
+            <i class="fa fa-user mr-2"></i>
+            <p>
+              Users
+            </p>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            [routerLink]="['/notification']"
+            [routerLinkActive]="['active']"
+            class="nav-link"
+          >
+            <i class="fa fa-flag mr-2"></i>
+            <p>
+              Send Notification
+            </p>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            [routerLink]="['/reported-errors']"
+            [routerLinkActive]="['active']"
+            class="nav-link"
+          >
+          <i class="far fa-comments mr-2"></i>
+            <p>
+              Reported Errors
+            </p>
+          </a>
+        </li>
+      </ul>
+    </nav>
+    <!-- /.sidebar-menu -->
+  </div>
+  <!-- /.sidebar -->
+</aside>

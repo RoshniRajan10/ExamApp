@@ -1,0 +1,28 @@
+const COLLECTION_KEYS = {
+  PARENT_TOPIC: 'parentsRoot',
+  EXAM_LEVEL: 'levels',
+  MAIN_TOPIC: 'categories',
+  MONTHS: 'months',
+  SUB_TOPIC: 'subCategories',
+  CURRENT_AFFAIRS: 'timeLineEvents',
+  USER_TIPS: 'examTipsInCategory',
+  FAQ: 'faqInSubCategory',
+  NEWS: 'newsInCategory',
+  EXAM: 'exams',
+  EXAMINCATEGORY: 'examsInCategory',
+  STUDY_MATERIAL: 'studyMaterials',
+  STUDY_MATERIAL_SUBCAT: 'studyMaterialsInSubCategories',
+  YOUTUBE_DATA: 'youtubeData',
+  YOUTUBE_INCHAPTER: 'youtubeVideoInChapter',
+  QUESTION_BANK: 'questionbank',
+  PRACTICE_SUBCATEGORIES: 'practicesInSubCategories',
+  PRACTICE: 'practices',
+  USER: 'users',
+  CHAPTER: 'chapter',
+  Youtube: 'Youtube',
+  CONTENT_REVIEWS: 'contentReview',
+  APP_DASHBOARD: 'dashboard',
+  QUESTION_TAGS: 'questionTags',
+  USERS_AND_ROLES: 'usersAndRoles'
+}
+export { COLLECTION_KEYS }

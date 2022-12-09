@@ -1,0 +1,362 @@
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <!-- left column -->
+      <div class="col-md-12 col">
+        <!-- general form elements -->
+        <div class="card card-primary mt-2">
+          <div class="card-header">
+            <h3 class="card-title">Update Exam</h3>
+          </div>
+          <div class="card-body">
+            <form action="" [formGroup]="updateExamForm" class="mt-3">
+              <div class="row mb-3">
+                <div class="col-6">
+                  <label>Main Topic <span style="color: red;">*</span> </label>
+                  <select
+                    class="form-control"
+                    formControlName="categoryName"
+                    required
+                    [(ngModel)]="categoryName"
+                    [ngClass]="{
+                      'is-invalid': submitted && examform.categoryName.errors
+                    }"
+                    [compareWith]="checkDatas"
+                  >
+                    <option value="">Select main topic</option>
+                    <option *ngFor="let item of categoryList" [ngValue]="item"
+                      >{{ item.categoryName }}
+                    </option>
+                  </select>
+                  <div
+                    *ngIf="submitted && examform.categoryName.errors"
+                    class="invalid-feedback"
+                  >
+                    <div *ngIf="examform.categoryName.errors.required">
+                      Main Topic name is required
+                    </div>
+                  </div>
+                </div>
+                <div class="col-6">
+                  <label>
+                    Exam Level <span style="color: red;">*</span>
+                  </label>
+                  <select
+                    class="form-control float-left"
+                    formControlName="levelName"
+                    required
+                    [(ngModel)]="levelName"
+                    [ngClass]="{
+                      'is-invalid': submitted && examform.levelName.errors
+                    }"
+                    [compareWith]="checkLevel"
+                  >
+                    <option value="">Select exam level</option>
+                    <option
+                      *ngFor="let items of examLevelList"
+                      [ngValue]="items"
+                      >{{ items.levelName }}</option
+                    >
+                  </select>
+                  <div
+                    *ngIf="submitted && examform.levelName.errors"
+                    class="invalid-feedback"
+                  >
+                    <div
+                      *ngIf="examform.levelName.errors.required"
+                    >
+                      Level Name is required
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row mb-3">
+                <div class="col-6">
+                  <label>Exam Name <span style="color: red;">*</span> </label>
+                  <input
+                    class="form-control"
+                    type="text"
+                    formControlName="examName"
+                    [(ngModel)]="examName"
+                    placeholder="Exam name"
+                    required
+                    [ngClass]="{
+                      'is-invalid': submitted && examform.examName.errors
+                    }"
+                  />
+                  <div
+                    *ngIf="submitted && examform.examName.errors"
+                    class="invalid-feedback"
+                  >
+                    <div
+                      *ngIf="examform.examName.errors.required"
+                    >
+                      Exam name is required
+                    </div>
+                  </div>
+                </div>
+                <div class="col-6">
+                  <label>
+                    Duration <span style="color: red;">*</span>
+                  </label>
+                  <input
+                    class="form-control"
+                    type="number"
+                    min="1"
+                    (keypress)="allowNumberOnly($event)"
+                    formControlName="examDuration"
+                    [(ngModel)]="examDuration"
+                    placeholder="Duration"
+                    required
+                    [ngClass]="{
+                      'is-invalid': submitted && examform.examDuration.errors
+                    }"
+                  />
+                  <div
+                    *ngIf="submitted && examform.examDuration.errors"
+                    class="invalid-feedback"
+                  >
+                    <div
+                      *ngIf="examform.examDuration.errors.required"
+                    >
+                      Duration is required
+                    </div>
+                  </div>
+                </div>
+              </div>
+  
+              <div class="row mb-3">
+                <div class="col-4">
+                  <label
+                    >Total No Of Questions <span style="color: red;">*</span>
+                  </label>
+                  <input
+                    class="form-control"
+                    type="number"
+                    formControlName="totalNoOfQuestions"
+                    placeholder="Total question"
+                    [(ngModel)]="totalNoOfQuestions"
+                    (keypress)="allowNumberOnly($event)"
+                    required
+                    [ngClass]="{
+                      'is-invalid':
+                        submitted && examform.totalNoOfQuestions.errors
+                    }"
+                  />
+                  <div
+                    *ngIf="submitted && examform.totalNoOfQuestions.errors"
+                    class="invalid-feedback"
+                  >
+                    <div
+                      *ngIf="examform.totalNoOfQuestions.errors.required"
+                    >
+                      Question no is required
+                    </div>
+                  </div>
+                </div>
+                <div class="col-4">
+                  <label>
+                    Total Mark <span style="color: red;">*</span>
+                  </label>
+                  <input
+                    class="form-control"
+                    type="number"
+                    formControlName="totalMark"
+                    [(ngModel)]="totalMark"
+                    placeholder="Total mark"
+                    (keypress)="allowNumberOnly($event)"
+                    required
+                    [ngClass]="{
+                      'is-invalid': submitted && examform.totalMark.errors
+                    }"
+                  />
+                  <div
+                    *ngIf="submitted && examform.totalMark.errors"
+                    class="invalid-feedback"
+                  >
+                    <div *ngIf="examform.totalMark.errors.required">
+                      Total mark is required
+                    </div>
+                    <!-- <div *ngIf="examform.totalMark.errors?.pattern" style="margin-left: 44px;">
+                      Enter valid total Mmark
+                    </div> -->
+                  </div>
+                </div>
+                <div class="col-4">
+                  <label>
+                    Pass Mark <span style="color: red;">*</span>
+                  </label>
+                  <input
+                    class="form-control"
+                    type="number"
+                    formControlName="passMark"
+                    (keypress)="allowNumberOnly($event)"
+                    (change)="checkPassmark()"
+                    placeholder="Pass mark"
+                    [(ngModel)]="passMark"
+                    required
+                    [ngClass]="{
+                      'is-invalid': submitted && examform.passMark.errors
+                    }"
+                  />
+  
+                  <div *ngIf="passmark && !examform.passMark.errors" style="color: red;">
+                    Pass mark value should not be greater than Total mark
+                  </div>
+                  <div
+                    *ngIf="submitted && examform.passMark.errors"
+                    class="invalid-feedback"
+                  >
+                    <div *ngIf="examform.passMark.errors.required">
+                      Pass mark is required
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row mb-3">
+                <div class="col-6">
+                  <div class="form-group">
+                    <div class="checkbox">
+                      <label>
+                        Does each question carry equal weightage?
+                        <input
+                          type="checkbox"
+                          [(ngModel)]="weightage"
+                          formControlName="w_yes"
+                          (change)="addexamLink($event)"
+                        />
+                      </label>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-6">
+                  <div class="form-group">
+                    <div class="checkbox">
+                      <label>
+                        Premium Content
+                        <input
+                          type="checkbox"
+                          [(ngModel)]="isPremium"
+                          formControlName="ispremium"
+                          (change)="isPremiumEvent($event)"
+                        />
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row mb-3" *ngIf="weightage">
+                <div class="col-6">
+                  <label>Marks <span style="color: red;">*</span> </label>
+                  <select
+                    class="form-control"
+                    formControlName="marks"
+                    [(ngModel)]="marks"
+                    (change)="checkTotalMark()"
+                    required
+                    [ngClass]="{
+                      'is-invalid': submitted && examform.marks.errors
+                    }"
+                  >
+                    <option value="">Select Marks</option>
+                    <option value="1">1 Mark</option>
+                    <option value="2">2 Marks</option>
+                    <option value="3">3 Marks</option>
+                    <option value="4">4 Marks</option>
+                    <option value="5">5 Marks</option>
+                    <option value="10">10 Marks</option>
+                    <option value="15">15 Marks</option>
+                  </select>
+                  <div
+                    *ngIf="submitted && examform.marks.errors"
+                    class="invalid-feedback"
+                  >
+                    <div *ngIf="examform.marks.errors.required">
+                      Mark is required
+                    </div>
+                  </div>
+                  <div *ngIf="validateQuestionMark === true && submitted">
+                    <span style="color: red;">
+                      {{ validateQuestionMarkMsg }}
+                    </span>
+                  </div>
+                </div>
+                <div class="col-6">
+                  <label>
+                    Negative Marks <span style="color: red;">*</span>
+                  </label>
+                  <input
+                    type="number"
+                    class="form-control"
+                    placeholder="Negative Marks"
+                    formControlName="negativeMarks"
+                    [(ngModel)]="negativeMarks"
+                    min="0"
+                    required
+                    (input)="checkNegativeMark()"
+                    [ngClass]="{
+                      'is-invalid':
+                        submitted && examform.negativeMarks.errors
+                    }"
+                  />
+                  <div
+                    *ngIf="submitted && examform.negativeMarks.errors"
+                    class="invalid-feedback"
+                  >
+                    <div
+                      *ngIf="examform.negativeMarks.errors.required"
+                    >
+                      Negative mark is required
+                    </div>
+                  </div>
+                  <div *ngIf="negativeValidation === true">
+                    <span style="color: red;">Please add valid marks</span>
+                  </div>
+                </div>
+              </div>
+              <div class="row mb-3">
+                <div class="col-12">
+                  <label>Instructions <span style="color: red;">*</span></label>
+                  <ejs-richtexteditor
+                    type="text"
+                    class="form-control"
+                    formControlName="examInstruction"
+                    [(ngModel)]="examInstruction"
+                    rows="5"
+                    required
+                    [ngClass]="{
+                      'is-invalid': submitted && examform.examInstruction.errors
+                    }"
+                  >
+                  </ejs-richtexteditor>
+                  <div
+                    *ngIf="submitted && examform.examInstruction.errors"
+                    class="invalid-feedback"
+                  >
+                    <div
+                      *ngIf="examform.examInstruction.errors.required"
+                    >
+                      Exam instruction is required
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+          <div class="card-footer d-flex justify-content-end">
+            <button class="btn btn-secondary mr-2" (click)="Back()">
+              Cancel
+            </button>
+            <button
+              type="button"
+              class="btn btn-primary"
+              [disabled]="validateQuestionMark || negativeValidation || passmark"
+              (click)="updateExam()">
+              Update
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

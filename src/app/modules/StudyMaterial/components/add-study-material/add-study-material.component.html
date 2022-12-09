@@ -1,0 +1,175 @@
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <!-- left column -->
+      <div class="col-md-12">
+        <!-- general form elements -->
+        <div class="card card-primary">
+          <div class="card-header">
+            <h3 class="card-title">Create Study Material</h3>
+          </div>
+          <div class="card-body">
+            <form action="" [formGroup]="AddStudyMaterialForm">
+              <div class="row mb-3">
+                <div class="col-6">
+                  <label>Main Topic <span style="color: red;">*</span> </label>
+                  <select
+                    class="form-control float-left"
+                    formControlName="categoryName"
+                    (change)="changeCategory()"
+                    required
+                    [ngClass]="{
+                      'is-invalid': submitted && studymatform.categoryName.errors
+                    }"
+                  >
+                    <option value="">Select main topic</option>
+                    <option *ngFor="let item of MainTopicList" [ngValue]="item">{{
+                      item.categoryName
+                    }}</option>
+                  </select>
+                  <div
+                    *ngIf="submitted && studymatform.categoryName.errors"
+                    class="invalid-feedback"
+                  >
+                    <div *ngIf="studymatform.categoryName.errors.required">
+                      Main Topic name is required
+                    </div>
+                  </div>
+                </div>
+                <div class="col-6">
+                  <label>
+                    Select sub Topic <span style="color: red;">*</span>
+                  </label>
+                  <select
+                    class="form-control"
+                    formControlName="subCategoryName"
+                    (change)="changeSubCategory()"
+                    required
+                    [ngClass]="{
+                      'is-invalid':
+                        submitted && studymatform.subCategoryName.errors
+                    }"
+                  >
+                    <option value="">Select sub topic</option>
+                    <option *ngFor="let item1 of subCatname" [ngValue]="item1">{{
+                      item1.subCategory
+                    }}</option>
+                  </select>
+                  <div
+                    *ngIf="submitted && studymatform.subCategoryName.errors"
+                    class="invalid-feedback"
+                  >
+                    <div *ngIf="studymatform.subCategoryName.errors.required">
+                      Sub Topic is required
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row mb-3">
+                <div class="col-6">
+                  <label> Chapter Name <span style="color: red;">*</span> </label>
+                  <select
+                    formControlName="chapterName"
+                    class="form-control"
+                    required
+                    [ngClass]="{
+                      'is-invalid': submitted && studymatform.chapterName.errors
+                    }"
+                  >
+                    <option value="">Select chapter name</option>
+                    <option *ngFor="let data of chapterItems" [ngValue]="data">{{
+                      data.chapterName
+                    }}</option>
+                  </select>
+                  <div
+                    *ngIf="submitted && studymatform.chapterName.errors"
+                    class="invalid-feedback"
+                  >
+                    <div *ngIf="studymatform.chapterName.errors.required">
+                      Chapter is required
+                    </div>
+                  </div>
+                </div>
+                <div class="col-6">
+                  <label>
+                    Material Name <span style="color: red;">*</span>
+                  </label>
+                  <input
+                    class="form-control"
+                    type="text"
+                    formControlName="studyMaterialName"
+                    placeholder="study material name"
+                    required
+                    [ngClass]="{
+                      'is-invalid':
+                        submitted && studymatform.studyMaterialName.errors
+                    }"
+                  />
+                  <div
+                    *ngIf="submitted && studymatform.studyMaterialName.errors"
+                    class="invalid-feedback"
+                  >
+                    <div *ngIf="studymatform.studyMaterialName.errors.required">
+                      Study Material name is required
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row mb-3">
+                <div class="col-12">
+                  <label>Description <span style="color: red;">*</span></label>
+                  <ejs-richtexteditor
+                    type="text"
+                    class="form-control"
+                    formControlName="description"
+                    rows="5"
+                    required
+                    [ngClass]="{
+                      'is-invalid': submitted && studymatform.description.errors
+                    }"
+                  >
+                  </ejs-richtexteditor>
+                  <div
+                    *ngIf="submitted && studymatform.description.errors"
+                    class="invalid-feedback"
+                  >
+                    <div *ngIf="studymatform.description.errors.required">
+                      Description is required
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row mb-3">
+                <div class="col-6">
+                  <div class="form-group">
+                    <div class="checkbox">
+                      <label>
+                        Premium Content 
+                        <input
+                          type="checkbox"
+                          formControlName="ispremium"
+                          (change)="isPremiumEvent($event)"
+                        />
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+          <div class="card-footer d-flex justify-content-end">
+            <button class="btn btn-secondary mr-2" (click)="gotoList()">
+              Cancel
+            </button>
+            <button
+              type="button"
+              class="btn btn-primary"
+              (click)="addStudyMaterial()">
+              Save
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

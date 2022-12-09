@@ -1,0 +1,279 @@
+<ngx-spinner type="ball-spin-clockwise-fade" color="#1897ff"
+  ><div style="color: white;">Loading..</div></ngx-spinner
+>
+<section class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <h1>
+          Practice
+        </h1>
+      </div>
+      <div class="col-sm-12 d-flex justify-content-end">
+        <button
+          type="button"
+          class="btn btn-primary"
+          (click)="addPractice()"
+        >
+          Add Practice
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+<div *ngIf="isDataLoaded">
+    <div class="col-12 d-flex justify-content-start">
+      <div class="col-md-3 pl-0">
+          <input
+            type="text"
+            class="form-control"
+            (input)="onSearchChange($event.target.value)"
+            placeholder="Search practice"
+            [(ngModel)]="searchExam"
+          />
+      </div>
+      <form [formGroup]="practiceForm" action="" class="col-md-8">
+        <div class="row">
+          <div class="col-md-4">
+            <select
+              formControlName="categoryName"
+              (change)="changeCategory()"
+              class="form-control float-left"
+              [(ngModel)]="searchFilter.mainTopic"
+            >
+              <option *ngFor="let item of MainTopicList" [ngValue]="item">{{
+                item.categoryName
+              }}</option>
+            </select>
+          </div>
+          <div class="col-md-4">
+            <select
+              formControlName="subCategoryName"
+              (change)="changeSubCategory()"
+              class="form-control float-left"
+              [(ngModel)]="searchFilter.subTopic"
+            >
+              <option *ngFor="let item1 of subcatname" [ngValue]="item1">{{
+                item1.subCategory
+              }}</option>
+            </select>
+          </div>
+          <div class="col-md-4">
+            <select
+              formControlName="chapterName"
+              (change)="changeChapter()"
+              class="form-control"
+              [(ngModel)]="searchFilter.chapter"
+            >
+              <option *ngFor="let items of chapterItems" [ngValue]="items">{{
+                items.chapterName
+              }}</option>
+            </select>
+          </div>
+        </div>
+      </form>
+      <div class="col-md-1">
+        <button
+          class="btn btn-info reset com-button"
+          (click)="resetFilter()"
+        >
+          Reset
+        </button>
+      </div>
+    </div>
+
+  <section class="content mt-3">
+    <div
+      class="container-fluid"
+      *ngIf="
+        AllPracticeList && (AllPracticeList | filter: searchExam).length > 0;
+        else noDataFound
+      "
+    >
+      <div class="card tex">
+        <div class="card-body p-0">
+          <div class="table-responsive table-wrapper-scroll-y my-custom-scrollbar">
+            <table class="table m-0">
+              <thead class="thead">
+                <tr *ngIf="AllPracticeList.length > 0">
+                  <!-- <th>#</th> -->
+                  <th class="row-color">
+                    Practice Name &nbsp;<i
+                      class="fa fa-arrow-up arrow"
+                      style="cursor: pointer;"
+                      (click)="onPageSortDesc()"
+                    >
+                    </i
+                    >&nbsp;
+                    <i
+                      class="fa fa-arrow-down arrow"
+                      style="cursor: pointer;"
+                      (click)="onPageSortAsc()"
+                    ></i>
+                  </th>
+                  <th class="row-color">Chapter</th>
+                  <th class="row-color">Sub Topic</th>
+                  <th class="row-color">Main Topic</th>
+                  <th class="row-color"></th>
+                  <th width="17%" class="row-color">Action</th>
+                </tr>
+              </thead>
+              <tbody class="scrollit">
+                <tr
+                  *ngFor="
+                    let item of AllPracticeList
+                      | filter: searchExam
+                      | paginate: { itemsPerPage: itemsPerPage, currentPage: pageNo };
+                    let i = index
+                  "
+                >
+                  <td class="text">
+                    {{ item.practiceNames }}
+                  </td>
+                  <td class="text">
+                    {{ item.chapterName }}
+                  </td>
+                  <td class="text">
+                    {{ item.subCategoryNames }}
+                  </td>
+                  <td class="text">
+                    {{ item.categoryNames }}
+                  </td>
+                  <td>
+                    <span *ngIf="item.isPremium == true">
+                      <a
+                        data-toggle="tooltip"
+                        title="Premium Content"
+                        ><i class="fas fa-dollar-sign"></i></a
+                    ></span>
+                  </td>
+                  <td>
+                    <button
+                      type="button"
+                      class="btn-primary btn-xs mr-2"
+                      (click)="
+                        viewQuestion(
+                          item.practiceId,
+                          item.practicesInChapterKeys,
+                          item.chapterkey,
+                          item.same_weightage
+                        )
+                      "
+                    >
+                      Questions
+                    </button>
+                    <span
+                      *ngIf="item.isPublished == true"
+                      (click)="
+                        onUpdateUnPublish(
+                          item.practicesInChapterKeys,
+                          item.chapterkey,
+                          item.isPublished
+                        )
+                      "
+                      ><a
+                        data-toggle="tooltip"
+                        title="Unpublish this practice"
+                        ><i class="fas fa-eye mr-2 published-botton"></i></a
+                    ></span>
+                    <span
+                      *ngIf="item.isPublished == false"
+                      (click)="
+                        onUpdatepublish(
+                          item.practicesInChapterKeys,
+                          item.chapterkey,
+                          item.isPublished,
+                          item.practiceId,
+                          item.notificationMetaData
+                        )
+                      "
+                      ><a
+                        data-toggle="tooltip"
+                        title="Publish this practice"
+                        ><i class="fas fa-eye-slash mr-2 unpublished-botton"></i></a
+                    ></span>
+                    <span
+                      ><a
+                        data-toggle="tooltip"
+                        (click)="
+                          onUpdateExam(
+                            item.practiceId,
+                            item.practicesInChapterKeys,
+                            item.chapterkey,
+                            item.categoryKeys,
+                            item.subCategoryKeys,
+                            item.isPremium
+                          )
+                        "
+                        title="Edit this practice"
+                        ><i class="fas fa-edit mr-2 edit-botton"></i></a
+                    ></span>
+                    <span
+                      (click)="
+                        onDeleteExam(
+                          item.practicesInChapterKeys,
+                          item.chapterkey,
+                          item.isPublished
+                        )
+                      "
+                      ><a
+                        data-toggle="tooltip"
+                        title="Delete this practice"
+                      >
+                        <i
+                          class="fa fa-trash delete-botton mr-2"
+                          aria-hidden="true"
+                        ></i></a
+                    ></span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="card-footer clearfix" 
+            *ngIf="AllPracticeList && AllPracticeList.length > 0">
+          <div class="d-flex p-2 justify-content-end">
+            <div class="mr-1">
+              <select
+                class="form-control form-control-sm"
+                [(ngModel)]="itemsPerPage"
+                >
+                <option *ngFor="let item of itemsPerPageValues" [ngValue]="item">{{
+                  item
+                }}</option>
+              </select>
+            </div>
+            <div class="mr-1">
+              <input type="number" 
+                class="input" 
+                min="0" 
+                (change)="checkPageNumber($event)"
+                (keyup)="checkPageNumber($event)"
+                [(ngModel)]="pageNoBind"
+                placeholder="Go to"
+                class="form-control form-control-sm">
+            </div>
+            <div class="mr-1">
+              <pagination-controls
+                class="float-right"
+                (pageChange)="pageNo = $event && pageNoBind = $event"
+                [maxSize]="pageMaxSize"
+                (pageBoundsCorrection)="onPageBoundsCorrection($event)">
+              </pagination-controls>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <ng-template #noDataFound>
+      <app-data-not-found [noDataMsg]="noDataMsg"></app-data-not-found>
+    </ng-template>
+  </section>
+</div>
+
+<app-common-delete [item]="deleteItem"></app-common-delete>
+<app-common-publish [item]="publishItem"></app-common-publish>
+<!-- <app-common-publish-without-notification [item]="publishItem"></app-common-publish-without-notification> -->
+<app-common-unpublish [item]="unPublishItem"></app-common-unpublish>

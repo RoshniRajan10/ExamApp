@@ -1,0 +1,81 @@
+<div
+  class="modal fade"
+  id="showRandomQuestionModel"
+  tabindex="-1"
+  role="dialog"
+  aria-modal="true"
+>
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Add Questions to {{ examData.examNames }}</h2>
+            </div>
+            <div class="modal-body">
+                <form [formGroup]="tagPoolForm">
+                    <div class="row mt-2">
+                        <div class="col-12">
+                            <label>Course <span style="color: red;">*</span></label>
+                        </div>
+                        <div class="col-6">
+                            <ng-select2 
+                            [data]="qstnTagstoShow"
+                            [placeholder]="'Select tags'"
+                            [options]="options"
+                            formControlName="tags"
+                            required
+                            [ngClass]="{
+                                'is-invalid':submitted && tagPoolForm.controls.tags.errors
+                                }"
+                            ></ng-select2>
+                            <div 
+                            *ngIf="submitted && tagPoolForm.controls.tags.errors"
+                            class="invalid-feedback">
+                                <div *ngIf="tagPoolForm.controls.tags.errors.required"> Select atleast one tag </div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <ng-select2 
+                            [data]="subqstnTagstoShow"
+                            [placeholder]="'Select sub tags'"
+                            [options]="subtagoptions"
+                            formControlName="subtags"
+                            ></ng-select2>
+                        </div>
+                    </div>
+                    <div class="row mt-2">
+                        <div class="col-12">
+                            <label>Number of Questions <span style="color: red;">*</span></label>
+                        </div>
+                        <div class="col-12">
+                            <input
+                            type="text"
+                            formControlName="noOfQuestions"
+                            />
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button
+                type="button"
+                id="saveImage"
+                class="btn btn-primary reset"
+                role="button"
+                (click)=cancel()
+                >
+                Cancel
+                </button>
+                <button
+                type="button"
+                id="saveImage"
+                class="btn btn-primary"
+                data-dismiss="modal"
+                role="button"
+                (click)="addQuestionsByTag()"
+                >
+                Confirm
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

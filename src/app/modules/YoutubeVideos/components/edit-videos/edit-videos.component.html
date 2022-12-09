@@ -1,0 +1,251 @@
+<ngx-spinner type="ball-spin-clockwise-fade" color="#1897ff"
+  ><div style="color: white;">Loading..</div></ngx-spinner
+>
+<section class="content">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="card card-primary mt-3">
+            <div class="card-header">
+              <h3 class="card-title">Videos</h3>
+            </div>
+            <div class="card-body">
+              <form [formGroup]="addVideoForm" action="">
+                <div class="row mb-3">
+                  <div class="col-12">
+                    <label
+                      >Paste youtube video link <span style="color: red;">*</span>
+                    </label>
+                    <input
+                      class="form-control"
+                      type="text"
+                      required
+                      formControlName="videoID"
+                      [(ngModel)]="v_url"
+                      placeholder="youtube video link"
+                      required
+                      (input)="validateYouTubeUrl()"
+                      [ngClass]="{
+                        'is-invalid': submitted && videoform.videoID.errors
+                      }"
+                    />
+                    <div
+                      *ngIf="submitted && videoform.videoID.errors"
+                      class="invalid-feedback"
+                    >
+                      <div *ngIf="videoform.videoID.errors.required">
+                        Video link is required
+                      </div>
+                    </div>
+                    <div *ngIf="videoValidate === true" style="color: red;">
+                      Please enter a valid youtube link
+                    </div>
+                  </div>
+                </div>
+                <div class="row mb-3 d-flex justify-content-center">
+                  <button
+                    *ngIf="showYoutubeDetails === false"
+                    type="button"
+                    class="btn btn-primary"
+                    (click)="FetchYouTubeData()"
+                  >
+                    Fetch Video
+                  </button>
+                </div>
+                <div *ngIf="showYoutubeDetails">
+                  <div class="row mb-3">
+                    <div class="col-4">
+                      <label> Main Topic: </label> {{categoryNames.categoryName}}
+                      <!-- <select
+                          class="form-control float-left"
+                          formControlName="categoryName"
+                          (change)="changeCategory()"
+                          required
+                          [(ngModel)]="categoryNames"
+                          [ngClass]="{
+                              'is-invalid': submitted && videoform.categoryName.errors
+                          }"
+                          [compareWith]="checkDatas"
+                          >
+                          <option value="">Select main topic</option>
+                          <option *ngFor="let item of categoryList" [ngValue]="item"
+                              >{{ item.categoryName }}
+                          </option>
+                          </select>
+                      <div
+                        *ngIf="submitted && videoform.categoryName.errors"
+                        class="invalid-feedback"
+                      >
+                        <div *ngIf="videoform.categoryName.errors.required">
+                          Category name is required
+                        </div>
+                      </div> -->
+                    </div>
+    
+                    <div class="col-4">
+                      <label>Sub Topic: </label>{{subCategoryName.subCategory}}
+                      <!-- <select
+                        formControlName="subCategoryName"
+                        (change)="changeSubCategory()"
+                        class="form-control"
+                        [(ngModel)]="subCategoryName"
+                        [ngClass]="{
+                          'is-invalid':
+                            submitted && videoform.subCategoryName.errors
+                        }"
+                        [compareWith]="checkSubCatname"
+                      >
+                        <option value="">select subtopic</option>
+                        <option
+                          *ngFor="let item1 of subCatname"
+                          [ngValue]="item1"
+                          >{{ item1.subCategory }}</option
+                        >
+                      </select>
+                      <div
+                        *ngIf="submitted && videoform.subCategoryName.errors"
+                        class="invalid-feedback"
+                      >
+                        <div *ngIf="videoform.subCategoryName.errors.required">
+                          Subcategory name is required
+                        </div>
+                      </div> -->
+                    </div>
+                    <div class="col-4">
+                      <label>Chapter : </label>{{chapterName.chapterName}}
+                      <!-- <select
+                        formControlName="chapterName"
+                        [(ngModel)]="chapterName"
+                        required
+                        class="form-control float-left"
+                        [ngClass]="{
+                          'is-invalid': submitted && videoform.chapterName.errors
+                        }"
+                        [compareWith]="checkChapterName"
+                      >
+                        <option value="">Select sub topic</option>
+                        <option
+                          *ngFor="let items of chapterItems"
+                          [ngValue]="items"
+                          >{{ items.chapterName }}</option
+                        >
+                      </select>
+                      <div
+                        *ngIf="submitted && videoform.chapterName.errors"
+                        class="invalid-feedback"
+                      >
+                        <div *ngIf="videoform.chapterName.errors.required">
+                          chapter name is required
+                        </div>
+                      </div> -->
+                    </div>
+                  </div>
+                  <div class="row mb-3">
+                    <div class="col-md-12">
+                      <label>Video title <span style="color: red;">*</span> </label>
+                      <input
+                        class="form-control"
+                        formControlName="title"
+                        [(ngModel)]="title"
+                        type="text"
+                        required
+                        [ngClass]="{
+                          'is-invalid': submitted && videoform.title.errors
+                        }"
+                      />
+                      <div
+                        *ngIf="submitted && videoform.title.errors"
+                        class="invalid-feedback"
+                      >
+                        <div *ngIf="videoform.title.errors.required">
+                          Title is required
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class="row mb-3"
+                    *ngIf="
+                      this.error == '401 Unauthorized' ||
+                      this.error == '403 Forbidden'
+                    "
+                  >
+                    <div class="col-4">
+                      <label
+                        >upload Thumbnail<span style="color: red;">*</span>
+                      </label>
+                    </div>
+                    <div class="col-4">
+                      <input
+                        type="file"
+                        name="thumbnail"
+                        required
+                        formControlName="thumbnail"
+                        [(ngModel)]="thumbnail"
+                        (change)="uploadThumbNail($event)"
+                        [ngClass]="{
+                          'is-invalid': submitted && videoform.thumbnail.errors
+                        }"
+                      />
+                      <div
+                        *ngIf="submitted && videoform.thumbnail.errors"
+                        class="invalid-feedback"
+                      >
+                        <div *ngIf="videoform.thumbnail.errors.required">
+                          Please upload thumbnail
+                        </div>
+                      </div>
+                      <input
+                        type="hidden"
+                        name=""
+                        formControlName="thumbnail"
+                        required
+                      />
+                    </div>
+                  </div>
+                  <div class="row mb-3">
+                    <div class="col-12">
+                      <div class="form-group">
+                        <div class="checkbox">
+                          <label>
+                            Premium Content
+                            <input
+                              type="checkbox"
+                              [(ngModel)]="isPremium"
+                              formControlName="ispremium"
+                              (change)="isPremiumEvent($event)"
+                            />
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row mb-3" *ngIf="this.error == undefined">
+                    <div class="col-md-10">
+                      <label>Video <span style="color: red;">*</span> </label>
+                      <div class="col-12" id="iframeId"></div>
+                    </div>
+                  </div>
+                </div>
+              </form>
+            </div>
+            <div class="card-footer d-flex justify-content-end">
+              <button class="btn btn-secondary mr-1" (click)="GoBack()">
+                Cancel
+              </button>
+              <button
+                *ngIf="showYoutubeDetails"
+                type="button"
+                class="btn btn-primary"
+                (click)="addVideoData()"
+                [disabled]="!isUploaded"
+              >
+                Update Video
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  

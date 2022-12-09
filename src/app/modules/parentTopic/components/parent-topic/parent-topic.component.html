@@ -1,0 +1,348 @@
+<ngx-spinner type="ball-spin-clockwise-fade" color="#1897ff"
+  ><div style="color: white;">Loading..</div></ngx-spinner
+>
+
+<section class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <h1> Parent Topics </h1>
+      </div>
+      <div class="col-sm-12">
+        <button
+          type="button"
+          class="btn btn-primary float-right"
+          data-toggle="modal"
+          data-target="#showAddTopicDialog"
+        >
+          Create Parent Topic
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div *ngIf="isDataLoaded">
+  <div class="col-md-12">
+    <div class="row">
+      <div class="col-md-4">
+        <input
+          type="text"
+          class="form-control"
+          (input)="onSearchChange($event.target.value)"
+          placeholder="Search parent topic"
+          [(ngModel)]="searchParentTopic"
+        />
+      </div>
+      <div class="col-md-4">
+        <button
+          class="btn btn-info"
+          (click)="resetFilter()"
+        >
+          Reset
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <section class="content mt-3">
+    <div
+      class="container-fluid"
+      *ngIf="
+        parentTopicList &&
+          (parentTopicList | filter: searchParentTopic).length > 0;
+        else noDataFound
+      "
+    >
+      <div class="card text">
+        <div class="card-body p-0">
+          <div class="table-responsive table-wrapper-scroll-y my-custom-scrollbar">
+            <table class="table m-0">
+              <thead class="thead">
+                <tr *ngIf="parentTopicList.length > 0">
+                  <th width="60%" class="row-color">
+                    Parent Topic &nbsp;
+                    <i
+                      class="fa fa-arrow-up arrow"
+                      style="cursor: pointer;"
+                      (click)="onPageSortDesc()"
+                    >
+                    </i
+                    >&nbsp;
+                    <i
+                      class="fa fa-arrow-down arrow"
+                      style="cursor: pointer;"
+                      (click)="onPageSortAsc()"
+                    ></i>
+                  </th>
+                  <th width="10%" class="row-color"></th>
+                  <th width="30%" class="row-color">Action</th>
+                  
+                </tr>
+              </thead>
+              <tbody class="scrollit">
+                <tr
+                  *ngFor="
+                    let item of parentTopicList
+                      | filter: searchParentTopic
+                      | paginate: { itemsPerPage: itemsPerPage, currentPage: pageNo };
+                    let i = index
+                  "
+                >
+                  <td>{{ item.parentName }}</td>
+                  <td >
+                    <span style="cursor: pointer;" *ngIf="item.isPremium == true" class="mr-3">
+                      <a
+                        data-toggle="tooltip"
+                        title="Premium Content"
+                        ><i class="fas fa-dollar-sign"></i></a
+                    ></span>
+                  </td>
+                  <td>
+                    <span *ngIf="item.isPublished == true"
+                      (click)="onUpdateUnpublish(item.$key, item.isPublished)"
+                      ><a
+                        data-toggle="tooltip"
+                        title="Unpublish this parent topic"
+                        ><i class="fas fa-eye mr-3 published-botton"></i></a
+                    ></span>
+                    <span 
+                      *ngIf="item.isPublished == false"
+                      (click)="onUpdatePublish(item.$key, item.isPublished, item)"
+                      ><a
+                        data-toggle="tooltip"
+                        title="Publish this parent topic"
+                        ><i class="fas fa-eye-slash mr-3 unpublished-botton"></i></a
+                    ></span>
+                    <span 
+                      (click)="onUpdateParentTopic(item.$key)"
+                      ><a
+                        data-toggle="tooltip"
+                        title="Edit this parent topic"
+                        ><i class="fas fa-edit mr-3 edit-botton"></i></a
+                    ></span>
+                    <span 
+                      (click)="onDeleteTopic(item.$key, item.isPublished)"
+                      class="mr-3">
+                      <a
+                        data-toggle="tooltip"
+                        title="Delete this parent topic"
+                      >
+                        <i class="fa fa-trash delete-botton"></i>
+                      </a
+                    ></span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="card-footer clearfix" 
+            *ngIf="parentTopicList.length > 0">
+          <div class="d-flex p-2 justify-content-end">
+            <div class="mr-1">
+              <select
+                class="form-control form-control-sm"
+                [(ngModel)]="itemsPerPage"
+                >
+                <option *ngFor="let item of itemsPerPageValues" [ngValue]="item">{{
+                  item
+                }}</option>
+              </select>
+            </div>
+            <div class="mr-1">
+              <input type="number" 
+                class="input" 
+                min="0" 
+                (change)="checkPageNumber($event)"
+                (keyup)="checkPageNumber($event)"
+                [(ngModel)]="pageNoBind"
+                placeholder="Go to"
+                class="form-control form-control-sm">
+            </div>
+            <div class="mr-1">
+              <pagination-controls
+                class="float-right"
+                (pageChange)="pageNo = $event && pageNoBind = $event"
+                [maxSize]="pageMaxSize"
+                (pageBoundsCorrection)="onPageBoundsCorrection($event)">
+              </pagination-controls>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <ng-template #noDataFound>
+      <app-data-not-found [noDataMsg]="noDataMsg"></app-data-not-found>
+    </ng-template>
+  </section>
+</div>
+
+
+
+<div
+  class="modal fade"
+  id="showAddTopicDialog"
+  aria-hidden="true"
+  style="display: none;"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title">
+          Add Parent Topic
+        </h3>
+        <button
+          type="button"
+          class="close"
+          data-dismiss="modal"
+          aria-label="Close"
+        >
+          <span aria-hidden="true"></span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="parentForm">
+          <div class="form-group">
+            <label>Parent Topic <span style="color: red;">*</span> </label>
+            <input
+              type="text"
+              class="form-control mb-2"
+              placeholder="Parent topic name"
+              formControlName="parentName"
+              MaxLength="30"
+              required
+              (input)="validateWhiteSpace()"
+              [ngClass]="{
+                'is-invalid': submitted && parentform.parentName.errors
+              }"
+            />
+            <div
+              *ngIf="submitted && parentform.parentName.errors"
+              class="invalid-feedback"
+            >
+              <div *ngIf="parentform.parentName.errors.required">
+                Parent topic name is required
+              </div>
+            </div>
+            <div *ngIf="spaceValidate === true" style="color: red;">
+              Parent topic name is required
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="checkbox">
+              <label>
+                Premium Content 
+                <input
+                  type="checkbox"
+                  formControlName="ispremium"
+                  (change)="isPremiumEvent($event)"
+                />
+              </label>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button
+              class="btn btn-secondary"
+              (click)="onDialogClose('showAddTopicDialog')"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              class="btn btn-primary"
+              (click)="addParentTopic()"
+              [disabled]="spaceValidate === true"
+            >
+              Save
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div
+  class="modal fade"
+  id="showUpdateTopicDialog"
+  aria-hidden="true"
+  style="display: none;"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title">Update Parent Topic</h3>
+        <button
+          type="button"
+          class="close"
+          data-dismiss="modal"
+          aria-label="Close"
+        >
+          <span aria-hidden="true"></span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="parentForm">
+          <div class="form-group">
+            <label>Parent Topic <span style="color: red;">*</span> </label>
+            <input
+              type="text"
+              class="form-control mb-2"
+              placeholder="Parent topic name"
+              formControlName="parentName"
+              (input)="validateWhiteSpace()"
+              MaxLength="30"
+              id="parent"
+              required
+              [ngClass]="{
+                'is-invalid': submitted && parentform.parentName.errors
+              }"
+            />
+            <div
+              *ngIf="submitted && parentform.parentName.errors"
+              class="invalid-feedback"
+            >
+              <div *ngIf="parentform.parentName.errors.required">
+                Parent topic name is required
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="checkbox">
+              <label>
+                Premium Content 
+                <input
+                  type="checkbox"
+                  [(ngModel)]="isPremium"
+                  formControlName="ispremium"
+                  (change)="isPremiumEvent($event)"
+                />
+              </label>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button
+              class="btn btn-secondary"
+              (click)="onDialogClose('showUpdateTopicDialog')"
+            >
+              Cancel
+            </button>
+
+            <button
+              type="button"
+              class="btn btn-primary"
+              (click)="updateParentTopic(Id)"
+            >
+              Update
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- <app-common-publish [item]="publishItem"></app-common-publish> -->
+<app-common-publish-without-notification [item]="publishItem"></app-common-publish-without-notification>
+<app-common-unpublish [item]="unPublishItem"></app-common-unpublish>
+<app-common-delete [item]="deleteItem"></app-common-delete>

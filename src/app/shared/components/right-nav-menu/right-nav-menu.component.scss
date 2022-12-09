@@ -1,0 +1,19 @@
+p {
+  font-family: 'Source Sans Pro', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-weight: 400;
+}
+
+.tabs li {
+  cursor: pointer;
+  line-height: 2rem;
+}
+
+.tabs li.active-tab {
+  color: blue;
+  text-decoration: underline;
+}
+// .active{
+//   background-color: red;
+//   color: white;
+//   font-size: 55px;
+// }

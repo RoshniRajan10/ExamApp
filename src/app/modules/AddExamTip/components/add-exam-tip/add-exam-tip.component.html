@@ -1,0 +1,193 @@
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <!-- left column -->
+      <div class="col-md-12">
+        <!-- general form elements -->
+        <div class="card card-primary mt-3">
+          <div class="card-header">
+            <h3 class="card-title">Exam Tips</h3>
+          </div>
+          <div class="card-body">
+            <form [formGroup]="ExamTipForm" action="">
+              <div class="row mb-3">
+                <div class="col-6" *ngIf="CatKey == '' || CatKey == undefined">
+                  <label>Main Topic <span style="color: red;">*</span></label>
+                  <select
+                    formControlName="categoryKey"
+                    required
+                    class="form-control"
+                    [ngClass]="{'is-invalid': submitted && examTipform.categoryKey.errors}">
+                    <option value="">Select Main Topic</option>
+                    <option
+                      *ngFor="let item of categoryList"
+                      [ngValue]="item"
+                      >{{ item.categoryName }}</option
+                    >
+                  </select>
+                  <div *ngIf="submitted && examTipform.categoryKey.errors" class="invalid-feedback">
+                    <div *ngIf="examTipform.categoryKey.errors.required">
+                      Main topic is required
+                    </div>
+                  </div>
+                </div>
+                <div class="col-6" *ngIf="CatKey">
+                  <label>Main Topic </label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="categoryName"
+                    [(ngModel)]="categoryNames"
+                    disabled
+                  />
+                </div>
+                <div class="col-6">
+                  <label>Tip Title<span style="color: red;">*</span></label>
+                  <input
+                    class="form-control"
+                    type="text"
+                    formControlName="examTipName"
+                    placeholder="Tip Title"
+                    required
+                    [ngClass]="{
+                      'is-invalid': submitted && examTipform.examTipName.errors
+                    }"
+                  />
+                  <div *ngIf="submitted && examTipform.examTipName.errors" class="invalid-feedback">
+                    <div *ngIf="examTipform.examTipName.errors.required">
+                      Tip title is required
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row mb-3">
+                <div class="col-12">
+                  <label>Description <span style="color: red;">*</span></label>
+                  <ejs-richtexteditor
+                    rows="5"
+                    formControlName="examTipDescription"
+                    required
+                    [ngClass]="{
+                      'is-invalid':
+                        submitted && examTipform.examTipDescription.errors
+                    }"
+                  ></ejs-richtexteditor>
+                  <div
+                    *ngIf="submitted && examTipform.examTipDescription.errors"
+                    class="invalid-feedback"
+                  >
+                    <div *ngIf="examTipform.examTipDescription.errors.required">
+                      Description is required
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row mb-3">
+                <div class="col-12">
+                  <label class="mr-2">Upload Image<span style="color: red;">*</span> </label>
+                  <input
+                    type="file"
+                    name="image"
+                    required
+                    (change)="uploadImage($event)"
+                    [ngClass]="{
+                      'is-invalid': submitted && examTipform.image.errors
+                    }"
+                  />
+                  <input
+                    type="hidden"
+                    name=""
+                    formControlName="image"
+                    required
+                    [(ngModel)]="image"
+                  />
+                  <input
+                    type="text"
+                    name=""
+                    formControlName="imageName"
+                    [(ngModel)]="imageName"
+                    style="
+                      border: none;
+                      background-color: white;
+                      margin-left: 100px;
+                    "
+                  />
+                  <div
+                    *ngIf="submitted && examTipform.image.errors"
+                    class="invalid-feedback"
+                  >
+                    <div *ngIf="examTipform.image.errors.required">
+                      Image is required
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row mb-3">
+                <div class="col-12">
+                  <div class="form-group">
+                    <div class="checkbox">
+                      <label>
+                        Has link ?
+                        <input
+                          type="checkbox"
+                          [(ngModel)]="haslink"
+                          (change)="addexamLink($event)"
+                          formControlName="haslink"
+                        />
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row mb-3" *ngIf="examLink">
+                <div class="col-12">
+                  <label>Exam Link <span style="color: red;">*</span></label>
+                  <input
+                    class="form-control"
+                    type="text"
+                    required
+                    formControlName="tipLink"
+                    placeholder="Exam tip link"
+                    [ngClass]="{
+                      'is-invalid': submitted && examTipform.tipLink.errors
+                    }"
+                  />
+                  <div
+                    *ngIf="submitted && examTipform.tipLink.errors"
+                    class="invalid-feedback"
+                  >
+                    <div *ngIf="examTipform.tipLink.errors.required">
+                      Exam tip link is required
+                    </div>
+                    <div *ngIf="examTipform.tipLink.errors?.pattern">
+                      Enter Valid News link
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+          <div class="card-footer d-flex justify-content-end">
+            <button class="btn btn-secondary mr-2" (click)="gotoList()">
+              Cancel
+            </button>
+            <button
+              *ngIf="CatKey == '' || CatKey == undefined"
+              type="button"
+              class="btn btn-primary mr-2"
+              (click)="addExamTip()">
+                Save
+            </button>
+            <button
+              *ngIf="CatKey"
+              type="button"
+              class="btn btn-primary"
+              (click)="updateExamTip(categoryKey, usertipKey)">
+                Update
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

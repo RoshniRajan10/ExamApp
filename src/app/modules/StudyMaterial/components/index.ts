@@ -1,0 +1,6 @@
+export * from './add-study-material/add-study-material.component'
+export * from './manage-study-material/manage-study-material.component'
+export * from './list-study-material/list-study-material.component'
+export * from './edit-study-material/edit-study-material.component'
+export * from './view-study-material/view-study-material.component'
+export * from './update-study-material/update-study-material.component'

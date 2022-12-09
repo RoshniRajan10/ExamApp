@@ -1,0 +1,588 @@
+<ngx-spinner type="ball-spin-clockwise-fade" color="#1897ff"
+  ><div style="color: white;">Loading..</div></ngx-spinner
+>
+
+<section class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-3">
+      <div class="col-sm-6">
+        <h1>
+          Sub Topic
+        </h1>
+      </div>
+      <div class="col-sm-12">
+        <button
+          type="button"
+          class="btn btn-primary float-right"
+          data-toggle="modal"
+          data-target="#showAddTopicDialog"
+        >
+          Create Sub Topic
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div *ngIf="isDataLoaded">
+  <div class="col-md-12">
+    <div class="row">
+      <div class="col-md-4">
+        <input
+          type="text"
+          class="form-control"
+          (input)="onSearchChange($event.target.value)"
+          placeholder="Search topic"
+          [(ngModel)]="searchsubTopicTopic"
+        />
+      </div>
+      <form [formGroup]="subTopicSearchForm" action="" class="col-md-4">
+        <div class="row">
+          <div class="col-md-12">
+            <select
+              formControlName="categoryName"
+              (change)="changeCategory()"
+              class="form-control float-left"
+              [(ngModel)]="searchFilter.mainTopic"
+            >
+              <option *ngFor="let item of MainTopicList" [ngValue]="item">{{
+                item.categoryName
+              }}</option>
+            </select>
+          </div>
+        </div>
+      </form>
+      <div class="col-md-4 pull-left">
+        <button class="btn btn-info"
+        (click)="resetFilter()"  
+        >
+          Reset
+        </button>
+      </div>
+    </div>
+  </div>
+  <section class="content mt-3">
+    <div
+      class="container-fluid"
+      *ngIf="
+        subTopicList &&
+          (subTopicList | filter: searchsubTopicTopic).length > 0;
+        else noDataFound
+      "
+    >
+      <div class="card tex">
+        <div class="card-body p-0">
+          <div class="table-responsive table-wrapper-scroll-y my-custom-scrollbar">
+            <table class="table m-0">
+              <thead class="thead">
+                <tr>
+                  <!-- <th>#</th> -->
+
+                  <th width="20%" class="row-color">
+                    Sub Topic Name
+                    <i
+                      class="fa fa-arrow-up arrow"
+                      style="cursor: pointer;"
+                      (click)="onPageSortDesc()"
+                    >
+                    </i
+                    >&nbsp;
+                    <i
+                      class="fa fa-arrow-down arrow"
+                      style="cursor: pointer;"
+                      (click)="onPageSortAsc()"
+                    ></i>
+                  </th>
+                  <th width="20%" class="row-color">Main Topic</th>
+                  <th width="20%" class="row-color">Sub Topic Thumb</th>
+                  <th width="10%" class="row-color"></th>
+                  <th width="20%" class="row-color">Action</th>
+                </tr>
+              </thead>
+              <tbody class="scrollit">
+                <tr
+                  *ngFor="
+                    let item of subTopicList
+                      | filter: searchsubTopicTopic
+                      | paginate
+                      : { itemsPerPage: itemsPerPage, currentPage: pageNo };
+                    let i = index
+                  "
+                >
+                  <!-- <td class="text">{{ i + 1 }}</td> -->
+                  <td>{{ item.subCategory }}</td>
+                  <td class="text">
+                    {{ item.category }}
+                  </td>
+                  <td class="text">
+                    <img
+                      src="{{ item.subCategoryThumb }}"
+                      class="rounded-circle"
+                      alt=""
+                      width="30"
+                      height="30"
+                    />
+                  </td>
+                  <td>
+                    <span *ngIf="item.isPremium == true" class="mr-3">
+                      <a
+                        data-toggle="tooltip"
+                        title="Premium Content"
+                        ><i class="fas fa-dollar-sign"></i></a
+                    ></span>
+                  </td>
+                  <td>
+                    <span
+                      class="mr-3"
+                      *ngIf="item.isPublished == true"
+                      (click)="
+                        onUpdatUnPublish(
+                          item.subcatKey,
+                          item.categorykey,
+                          item.isPublished
+                        )"
+                      ><a
+                        data-toggle="tooltip"
+                        style="border: none;"
+                        title="Unpublish this sub topic"
+                      >
+                        <i
+                          class="fas fa-eye ml-3"
+                          style="color: #007bff; cursor: pointer;"
+                        ></i></a
+                    ></span>
+                    <span
+                      class="mr-3"
+                      *ngIf="item.isPublished == false"
+                      (click)="
+                        onUpdatePublish(
+                          item.subcatKey,
+                          item.categorykey,
+                          item.isPublished,
+                          item
+                        )
+                      "
+                      ><a
+                        data-toggle="tooltip"
+                        style="border: none;"
+                        title="Publish this sub topic"
+                      >
+                        <i class="fas fa-eye-slash ml-3"
+                           style="color: red; cursor: pointer;"
+                        ></i>
+                      </a>
+                    </span>
+                    <span 
+                      class="mr-3"
+                      style="cursor: pointer; cursor: pointer; color: green;"
+                      (click)="onUpdateSubTopic(item.subcatKey, item.categorykey)">
+                      <a
+                        data-toggle="tooltip"
+                        style="border: none;"
+                        title="Edit this sub topic"
+                        ><i class="fas fa-edit ml-2"></i>
+                      </a>
+                    </span>
+                    <span
+                      class="mr-3"
+                      (click)="
+                        onDeleteSubTopic(
+                          item.subcatKey,
+                          item.categorykey,
+                          item.isPublished
+                        )
+                      "
+                    >
+                      <a
+                        data-toggle="tooltip"
+                        style="border: none;"
+                        title="Delete this sub topic"
+                      >
+                        <i
+                          class="fa fa-trash ml-3"
+                          aria-hidden="true"
+                          style="cursor: pointer; color: indianred;"
+                        ></i></a
+                    ></span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="card-footer clearfix" 
+            *ngIf="subTopicList && subTopicList.length > 0">
+          <div class="d-flex p-2 justify-content-end">
+            <div class="mr-1">
+              <select
+                class="form-control form-control-sm"
+                [(ngModel)]="itemsPerPage"
+                >
+                <option *ngFor="let item of itemsPerPageValues" [ngValue]="item">{{
+                  item
+                }}</option>
+              </select>
+            </div>
+            <div class="mr-1">
+              <input type="number" 
+                class="input" 
+                min="0" 
+                (change)="checkPageNumber($event)"
+                (keyup)="checkPageNumber($event)"
+                [(ngModel)]="pageNoBind"
+                placeholder="Go to"
+                class="form-control form-control-sm">
+            </div>
+            <div class="mr-1">
+              <pagination-controls
+                class="float-right"
+                (pageChange)="pageNo = $event && pageNoBind = $event"
+                [maxSize]="pageMaxSize"
+                (pageBoundsCorrection)="onPageBoundsCorrection($event)">
+              </pagination-controls>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <ng-template #noDataFound>
+      <app-data-not-found [noDataMsg]="noDataMsg"></app-data-not-found>
+    </ng-template>
+  </section>
+</div>
+
+
+
+<div
+  class="modal fade"
+  id="showAddTopicDialog"
+  aria-hidden="true"
+  style="display: none;"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Create Sub Topic</h4>
+        <!-- <button
+          type="button"
+          class="close"
+          data-dismiss="modal"
+          aria-label="Close"
+        >
+          <span aria-hidden="true"></span>
+        </button> -->
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="SubTopicFormAdd" action="">
+          <div class="row mb-3">
+            <div class="col-4">
+              <label>Parent Topic <span style="color: red;">*</span></label>
+            </div>
+            <div class="col-8">
+              <select
+                formControlName="parentKey"
+                class="form-control"
+                required
+                [ngClass]="{
+                  'is-invalid': submitted && subtopicformAdd.parentKey.errors
+                }"
+                (change)="filterCategory()"
+              >
+                <option value="">Select parent topic</option>
+                <option *ngFor="let item of parentTopicList" [ngValue]="item">{{
+                  item.parentName
+                }}</option>
+              </select>
+              <div
+                *ngIf="submitted && subtopicformAdd.parentKey.errors"
+                class="invalid-feedback"
+              >
+                <div *ngIf="subtopicformAdd.parentKey.errors.required">
+                  Select parent topic
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-4">
+              <label>Main Topic <span style="color: red;">*</span></label>
+            </div>
+            <div class="col-8">
+              <select
+                formControlName="categoryName"
+                class="form-control"
+                [ngClass]="{
+                  'is-invalid': submitted && subtopicformAdd.categoryName.errors
+                }"
+              >
+                <option value="">select main topic</option>
+                <option
+                  *ngFor="let item of MainTopics"
+                  [ngValue]="item.$key"
+                  >{{ item.categoryName }}</option
+                >
+              </select>
+              <div
+                *ngIf="submitted && subtopicformAdd.categoryName.errors"
+                class="invalid-feedback"
+              >
+                <div *ngIf="subtopicformAdd.categoryName.errors.required">
+                  Select main topic
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row mb-3">
+            <div class="col-4">
+              <label>Sub Topic Name <span style="color: red;">*</span></label>
+            </div>
+            <div class="col-8">
+              <input
+                type="text"
+                class="form-control"
+                placeholder="Sub topic name"
+                formControlName="subCategoryName"
+                required
+                (input)="validateWhiteSpace()"
+                [ngClass]="{
+                  'is-invalid':
+                    submitted && subtopicformAdd.subCategoryName.errors
+                }"
+              />
+              <div
+                *ngIf="submitted && subtopicformAdd.subCategoryName.errors"
+                class="invalid-feedback"
+              >
+                <div *ngIf="subtopicformAdd.subCategoryName.errors.required">
+                  Sub topic name is required
+                </div>
+                <div *ngIf="spaceValidate === true">
+                  Sub topic name is required
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row mb-4">
+            <div class="col-4">
+              <label>Sub Topic Image <span style="color: red;">*</span></label>
+            </div>
+            <div class="col-8">
+              <input
+                type="file"
+                name="subCategoryimage"
+                formControlName="subCategoryimage"
+                (change)="uploadSubCategory(false, $event)"
+                [ngClass]="{
+                  'is-invalid':
+                    submitted && subtopicformAdd.subCategoryThumb.errors
+                }"
+                style="overflow: hidden;"
+              />
+              <input type="hidden" name="" formControlName="subCategoryThumb" />
+              <div
+                *ngIf="submitted && subtopicformAdd.subCategoryThumb.errors"
+                class="invalid-feedback"
+              >
+                <div *ngIf="subtopicformAdd.subCategoryThumb.errors.required">
+                  Sub topic image is required
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-12">
+              <div class="form-group">
+                <div class="checkbox">
+                  <label>
+                    Premium Content 
+                    <input
+                      type="checkbox"
+                      formControlName="ispremium"
+                      (change)="isPremiumEvent($event)"
+                    />
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+      <!-- [disabled]="imageUpload == true || spaceValidate === true" -->
+      <div class="modal-footer">
+        <button
+          class="btn btn-secondary"
+          (click)="onDialogClose('showAddTopicDialog')"
+        >
+          Cancel
+        </button>
+        <button
+          type="button"
+          class="btn btn-primary"
+          (click)="addSubopic()"
+        >
+          Save
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div
+  class="modal fade"
+  id="showUpdateTopicDialog"
+  aria-hidden="true"
+  style="display: none;"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Update Sub Topic</h4>
+        <!-- <button
+          type="button"
+          class="close"
+          data-dismiss="modal"
+          aria-label="Close"
+        >
+          <span aria-hidden="true">×</span>
+        </button> -->
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="SubTopicFormUpdate" action="">
+          <div class="row mb-3">
+            <div class="col-4">
+              <label>Main Topic <span style="color: red;">*</span></label>
+            </div>
+            <div class="col-8">
+              <input
+                type="text"
+                class="form-control"
+                placeholder="Sub topic name"
+                formControlName="categoryName"
+                disabled
+                [(ngModel)]="categoryName1"
+                required
+                autofocus
+              />
+              <div
+                *ngIf="submitted && subtopicformUpdate.categoryName.errors"
+                class="invalid-feedback"
+              >
+                <div *ngIf="subtopicformUpdate.categoryName.errors.required">
+                  Select main topic
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row mb-3">
+            <div class="col-4">
+              <label>Sub Topic Name <span style="color: red;">*</span></label>
+            </div>
+            <div class="col-8">
+              <input
+                type="text"
+                class="form-control"
+                placeholder="Sub topic name"
+                formControlName="subCategoryName"
+                required
+                autofocus
+                [ngClass]="{
+                  'is-invalid':
+                    submitted && subtopicformUpdate.subCategoryName.errors
+                }"
+              />
+              <div
+                *ngIf="submitted && subtopicformUpdate.subCategoryName.errors"
+                class="invalid-feedback"
+              >
+                <div *ngIf="subtopicformUpdate.subCategoryName.errors.required">
+                  Sub topic name is required
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row mb-3">
+            <div class="col-4">
+              <label>Sub Topic Image <span style="color: red;">*</span></label>
+            </div>
+            <div class="col-8">
+              <input
+                type="file"
+                name="subCategoryimage"
+                formControlName="subCategoryimage"
+                (change)="uploadSubCategory(true, $event)"
+                style="overflow: hidden;"
+              />
+              <input type="hidden" name="" formControlName="subCategoryThumb" />
+              <input
+                type="text"
+                name=""
+                formControlName="subCategoryThumbName"
+                required
+                style="
+                  background-color: white;
+                  margin-right: 78px;
+                "
+                autofocus
+                [ngClass]="{
+                  'is-invalid':
+                    submitted && subtopicformUpdate.subCategoryThumbName.errors
+                }"
+              />
+              <div
+                *ngIf="submitted && subtopicformUpdate.subCategoryThumbName.errors"
+                class="invalid-feedback"
+              >
+                <div
+                  *ngIf="subtopicformUpdate.subCategoryThumbName.errors.required"
+                >
+                  Sub topic image name is required
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-12">
+              <div class="form-group">
+                <div class="checkbox">
+                  <label>
+                    Premium Content 
+                    <input
+                      type="checkbox"
+                      [(ngModel)]="isPremium"
+                      formControlName="ispremium"
+                      (change)="isPremiumEvent($event)"
+                    />
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button
+          class="btn btn-secondary"
+          (click)="onDialogClose('showUpdateTopicDialog')"
+        >
+          Cancel
+        </button>
+        <button
+          type="submit"
+          class="btn btn-primary"
+          [disabled]="imageUpload == true"
+          (click)="updateSubopic(subcatKey, categorykey)"
+        >
+          Update
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- <app-common-publish [item]="publishItem"></app-common-publish> -->
+<app-common-publish-without-notification [item]="publishItem"></app-common-publish-without-notification>
+<app-common-unpublish [item]="unPublishItem"></app-common-unpublish>
+<app-common-delete [item]="deleteItem"></app-common-delete>

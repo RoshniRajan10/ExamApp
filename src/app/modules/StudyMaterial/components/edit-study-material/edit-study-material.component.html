@@ -1,0 +1,187 @@
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <!-- left column -->
+      <div class="col-md-12">
+        <!-- general form elements -->
+        <div class="card card-primary">
+          <div class="card-header">
+            <h3 class="card-title">Update Study Material</h3>
+          </div>
+          <div class="card-body">
+            <form [formGroup]="AddStudyMaterialForm">
+              <div class="row mb-3">
+                <div class="col-6">
+                  <label>Main Topic <span style="color: red;">*</span> </label>
+                  <select
+                    class="form-control float-left"
+                    formControlName="categoryName"
+                    (change)="changeCategory()"
+                    required
+                    [(ngModel)]="categoryName"
+                    [ngClass]="{
+                      'is-invalid': submitted && studymatform.categoryName.errors
+                    }"
+                    [compareWith]="checkCategoryName"                  >
+                    <option value="">Select main topic</option>
+                    <option *ngFor="let item of MainTopicList" 
+                            [ngValue]="item" 
+                            [selected]="item.categoryName === categoryName">{{
+                      item.categoryName
+                    }}</option>
+                  </select>
+                  <div
+                    *ngIf="submitted && studymatform.categoryName.errors"
+                    class="invalid-feedback"
+                  >
+                    <div *ngIf="studymatform.categoryName.errors.required">
+                      Main Topic name is required
+                    </div>
+                  </div>
+                </div>
+                <div class="col-6">
+                  <label>
+                    Select sub Topic <span style="color: red;">*</span>
+                  </label>
+                  <select
+                    class="form-control"
+                    formControlName="subCategoryName"
+                    required
+                    (change)="changeSubCategory()"
+                    [(ngModel)]="subCategoryName"
+                    [ngClass]="{
+                      'is-invalid':
+                        submitted && studymatform.subCategoryName.errors
+                    }"
+                    [compareWith]="checkSubCatname"
+                  >
+                    <option value="">Select sub topic</option>
+                    <option *ngFor="let item1 of subCatName" [ngValue]="item1">
+                      {{ item1.subCategory }}
+                    </option>
+                  </select>
+                  <div
+                    *ngIf="submitted && studymatform.subCategoryName.errors"
+                    class="invalid-feedback"
+                  >
+                    <div *ngIf="studymatform.subCategoryName.errors.required">
+                      Sub Topic is required
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row mb-3">
+                <div class="col-6">
+                  <label>Chapter Name <span style="color: red;">*</span> </label>
+                  <select
+                    class="form-control"
+                    formControlName="chapterName"
+                    required
+                    [(ngModel)]="chapterName"
+                    [ngClass]="{
+                      'is-invalid': submitted && studymatform.chapterName.errors
+                    }"
+                    [compareWith]="checkChapterName"
+                  >
+                    <option value="">Select chapter</option>
+                    <option *ngFor="let item of chapterItems" [ngValue]="item">
+                      {{ item.chapterName }}</option
+                    >
+                  </select>
+  
+                  <div
+                    *ngIf="submitted && studymatform.chapterName.errors"
+                    class="invalid-feedback"
+                  >
+                    <div *ngIf="studymatform.chapterName.errors.required">
+                      Chapter name is required
+                    </div>
+                  </div>
+                </div>
+                <div class="col-6">
+                  <label>
+                    Study Material Name <span style="color: red;">*</span>
+                  </label>
+                  <input
+                    class="form-control"
+                    type="text"
+                    formControlName="studyMaterialName"
+                    placeholder="study material name"
+                    required
+                    [(ngModel)]="studyMaterialName"
+                    [ngClass]="{
+                      'is-invalid':
+                        submitted && studymatform.studyMaterialName.errors
+                    }"
+                  />
+                  <div
+                    *ngIf="submitted && studymatform.studyMaterialName.errors"
+                    class="invalid-feedback"
+                  >
+                    <div *ngIf="studymatform.studyMaterialName.errors.required">
+                      Study Material name is required
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row mb-3">
+                <div class="col-12">
+                  <label>Description <span style="color: red;">*</span></label>
+                  <ejs-richtexteditor
+                    type="text"
+                    class="form-control"
+                    formControlName="description"
+                    [(ngModel)]="description"
+                    required
+                    [ngClass]="{
+                      'is-invalid': submitted && studymatform.description.errors
+                    }"
+                  >
+                  </ejs-richtexteditor>
+                  <div
+                    *ngIf="submitted && studymatform.description.errors"
+                    class="invalid-feedback"
+                  >
+                    <div
+                      *ngIf="studymatform.description.errors.required"
+                    >
+                      Description is required
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row mb-3">
+                <div class="col-12">
+                  <div class="form-group">
+                    <div class="checkbox">
+                      <label>
+                        Premium Content
+                        <input
+                          type="checkbox"
+                          [(ngModel)]="isPremium"
+                          formControlName="ispremium"
+                          (change)="isPremiumEvent($event)"
+                        />
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+          <div class="card-footer d-flex justify-content-end">
+            <button class="btn btn-secondary mr-2" (click)="GoBack()">
+              Cancel
+            </button>
+            <button
+              type="button"
+              class="btn btn-primary"
+              (click)="updateStudyMaterial()">
+              Update
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

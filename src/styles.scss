@@ -1,0 +1,131 @@
+/* You can add global styles to this file, and also import other style files */
+/* You can add global styles to this file, and also import other style files */
+// @import '~bootstrap/scss/bootstrap';
+
+@import '~ionicons/css/ionicons.min.css';
+
+@import '~admin-lte/plugins/fontawesome-free/css/all.min.css';
+@import '~admin-lte/plugins/icheck-bootstrap/icheck-bootstrap.min.css';
+@import '~admin-lte/dist/css/adminlte.min.css';
+
+@import '~ngx-toastr/toastr';
+
+::-webkit-scrollbar {
+  width: 0px;
+  background: transparent;
+}
+
+.row-color {
+  background-color: #007bff;
+  color: white;
+}
+.democss {
+  color: red;
+}
+.arrow {
+  font-size: 12px;
+}
+
+.reset {
+  color: #fff;
+  background-color: #17a2b8;
+  border-color: #17a2b8;
+}
+
+html,
+body {
+  height: 100%;
+}
+body {
+  margin: 0;
+  font-family: Roboto, 'Helvetica Neue', sans-serif;
+}
+// FOR TABLES
+.my-custom-scrollbar {
+  position: relative;
+  max-height: 600px;
+  overflow: auto;
+}
+.table-wrapper-scroll-y {
+  display: block;
+}
+.thead {
+  position: sticky;
+  top: -1px;
+  z-index: 1;
+}
+table th:first-child{
+  border-radius:.25rem 0 0 0;
+}
+
+table th:last-child{
+  border-radius:0 .25rem 0 0;
+}
+
+// for buttons
+.edit-botton {
+  cursor: pointer; 
+  color: green;
+}
+
+.unpublished-botton {
+  border: none; 
+  color: red;
+  cursor: pointer; 
+}
+
+.published-botton {
+  border: none; 
+  color: #007bff;
+  cursor: pointer; 
+}
+
+.delete-botton {
+  cursor: pointer; 
+  color: indianred;
+}
+
+.isPremium-icon {
+  border: none; 
+  color: #4b4605;
+}
+
+.cancel-button {
+  background-color: #f8f9fa; 
+  border-color: #ddd; 
+  color: #444;
+}
+
+.add-button {
+  cursor: pointer;
+}
+.clearfix input[placeholder="Go to"]{
+  width: 50%
+}
+.ngx-pagination {
+  margin-top: 3px
+}
+.modal-footer {
+  margin-top: 10px;
+}
+.modal-title {
+  font-size: 20px !important;
+}
+a[title="Premium Content"] .fa-dollar-sign{
+  border: none; 
+  color: #4b4605;
+  cursor: auto;
+}
+
+.feedback-icon {
+  cursor: pointer;
+  border: none; 
+  color: #007bff; 
+}
+
+.unhandled {
+  border: none; 
+  color: red;
+  cursor: pointer;
+}
+

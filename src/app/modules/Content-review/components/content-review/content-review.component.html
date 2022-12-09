@@ -1,0 +1,252 @@
+<ngx-spinner type="ball-spin-clockwise-fade" color="#1897ff">
+  <div style="color: white;">Loading..</div>
+</ngx-spinner>
+<section class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <h1>
+          Reported Errors
+        </h1>
+      </div>
+    </div>
+  </div>
+</section>
+<div>
+  <div class="col-md-12">
+    <div class="row">
+      <div class="col-md-4">
+        <input
+          type="text"
+          class="form-control"
+          (input)="onSearchChange($event.target.value)"
+          placeholder="Search Reviews"
+          [(ngModel)]="searchReviews"
+        />
+      </div>
+      <div class="col-md-4">
+        <button 
+        class="btn btn-info"
+        (click)="resetFilter()"
+        >
+          Reset
+        </button>
+      </div>
+      <div class="col-md-4">
+        <form [formGroup]="contentReviewFormAD" action="" class="">
+          <select
+            formControlName="contentStatus"
+            (change)="filterContent()"
+            class="form-control"
+          >
+            <option value="">All Reviews</option>
+            <option value="1">Replied</option>
+            <option value="2">Pending</option>
+          </select>
+        </form>
+      </div>
+    </div>
+  </div>
+  <section class="content mt-3">
+    <div class="container-fluid"
+    *ngIf="
+      allContentReviews && (allContentReviews | filter: searchReviews).length > 0;
+      else noDataFound
+      ">
+      <div class="card tex">
+        <div class="card-body p-0">
+          <div class="table-responsive table-wrapper-scroll-y my-custom-scrollbar">
+            <table class="table m-0">
+              <thead class="thead">
+                <tr>
+                  <!-- <th>#</th> -->
+                  <th width="15%" class="row-color">
+                    Complaint &nbsp;
+                    <i
+                    class="fa fa-arrow-up arrow"
+                    style="cursor: pointer;"
+                    (click)="onPageSortDesc()"
+                    ></i>&nbsp;
+                    <i
+                      class="fa fa-arrow-down arrow"
+                      (click)="onPageSortAsc()"
+                      style="cursor: pointer;"
+                    ></i>
+                  </th>
+                  <th width="40%" class="row-color">Description</th>
+                  <!-- <th class="row-color">Exam Name</th> -->
+                  <th width="20%" class="row-color">Main Topic</th>
+                  <th width="10%" class="row-color">Module</th>
+                  <th width="5%" colspan="6" class="row-color">Action</th>
+                </tr>
+              </thead>
+
+              <tbody class="scrollit">
+                <tr 
+                  *ngFor="
+                    let item of allContentReviews
+                      | filter: searchReviews
+                      | paginate
+                      : { itemsPerPage: itemsPerPage, currentPage: pageNo };
+                    let i = index
+                ">
+                  <td>
+                    <a 
+                      data-toggle="tooltip" 
+                      style="cursor: pointer; color: blue;"
+                      title="Reply to this review"
+                      (click)="onDetailedView(item)"
+                    >
+                    {{item.optionChose}}
+                    </a>
+                  </td>
+                  <td class="text">{{item.errorDescription}}</td>
+                  <!-- <td class="text">{{item.examName}}</td> -->
+                  <td class="text">{{item.mainTopic}}</td>
+                  <td class="text">{{item.module}}</td>
+                  <td>
+                    <span class="mr-2" *ngIf="item.reviews.status">
+                      <a data-toggle="tooltip" title="Handled Feedback">
+                        <i class="fas fa-check feedback-icon"></i>
+                      </a>
+                    </span>
+                    <span class="mr-2" *ngIf="!item.reviews.status">
+                      <a data-toggle="tooltip" title="Not Handled Feedback">
+                        <i class="fa fa-exclamation-circle unhandled"></i>
+                      </a>
+                    </span>
+                    <span class="mr-2">
+                      <a 
+                      data-toggle="tooltip" 
+                      title="Reply to this review"
+                      (click)="
+                        onUpdateComment(
+                          item.module,
+                          item.reviewType,
+                          item.reviewKey
+                        )
+                      "
+                      >
+                        <i class="fas fa-reply edit-botton"></i>
+                      </a>
+                    </span>
+                    <!-- <span><a data-toggle="tooltip" style="border: none;" title="Delete this chapter">
+                        <i class="fa fa-trash ml-3" aria-hidden="true" style="cursor: pointer; color: indianred;"></i>
+                      </a>
+                    </span> -->
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="card-footer clearfix" 
+            *ngIf="allContentReviews && allContentReviews.length > 0">
+          <div class="d-flex p-2 justify-content-end">
+            <div class="mr-1">
+              <select
+                class="form-control form-control-sm"
+                [(ngModel)]="itemsPerPage"
+                >
+                <option *ngFor="let item of itemsPerPageValues" [ngValue]="item">{{
+                  item
+                }}</option>
+              </select>
+            </div>
+            <div class="mr-1">
+              <input type="number" 
+                class="input" 
+                min="0" 
+                (change)="checkPageNumber($event)"
+                (keyup)="checkPageNumber($event)"
+                [(ngModel)]="pageNoBind"
+                placeholder="Go to"
+                class="form-control form-control-sm">
+            </div>
+            <div class="mr-1">
+              <pagination-controls
+                class="float-right"
+                (pageChange)="pageNo = $event && pageNoBind = $event"
+                [maxSize]="pageMaxSize"
+                (pageBoundsCorrection)="onPageBoundsCorrection($event)">
+              </pagination-controls>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <ng-template #noDataFound>
+      <app-data-not-found [noDataMsg]="noDataMsg"></app-data-not-found>
+    </ng-template>
+  </section>
+</div>
+
+
+
+
+<div
+  class="modal fade"
+  id="reviewCommentUpdate"
+  aria-hidden="true"
+  style="display: none;"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Comments</h4>
+        <button
+          type="button"
+          class="close"
+          data-dismiss="modal"
+          aria-label="Close"
+        >
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="commentForm" action="">
+          <input
+            type="text"
+            class="form-control mb-2"
+            placeholder="Comments"
+            id="parent"
+            formControlName="comments"
+            required
+            autofocus
+            [ngClass]="{
+              'is-invalid': submitted && commentForm.controls.comments.errors
+            }"
+          />
+          <div
+            *ngIf="submitted && commentForm.controls.comments.errors"
+            class="invalid-feedback"
+          >
+            <div *ngIf="commentForm.controls.comments.errors.required">
+              Comments is required
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <div class="modal-footer">
+        <button
+          class="btn btn-secondary"
+          (click)="onDialogClose('reviewCommentUpdate')"
+        >
+          Cancel
+        </button>
+        <button
+          type="submit"
+          class="btn btn-primary"
+          (click)="updateComment(selectedId, module, rev_type)"
+        >
+          Update
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-common-delete [item]="deleteItem"></app-common-delete>
+<app-error-detaild-view [data]="errorDetails"></app-error-detaild-view>

@@ -1,0 +1,56 @@
+<ngx-spinner type="ball-spin-clockwise-fade" color="#1897ff"
+  ><div style="color: white;">Loading..</div></ngx-spinner
+>
+<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+    <div class="modal-content">
+        <div class="modal-body">
+          <div class="d-flex justify-content-between mb-3">
+            <Label><strong>User: </strong>{{user.userDetails?.nickName || ''}}</Label>
+            <Label><strong>Phone Nmber: </strong>{{user.userDetails?.mobile || ''}}</Label>
+          </div>
+          <form [formGroup]="CourseFormAdd">
+              <div class="container-12">
+                  <div class="row">
+                      <div class="col-12">
+                          <label>Course <span style="color: red;">*</span></label>
+                      </div>
+                      <div class="col-12">
+                          <ng-select2 
+                          [data]="data"
+                          [placeholder]="'Select main topic'"
+                          [options]="options"
+                          formControlName="courseName"
+                          [(ngModel)]="user.courses"
+                          required
+                          [ngClass]="{
+                              'is-invalid':submitted && CourseFormAdd.controls.courseName.errors
+                              }"
+                          ></ng-select2>
+                          <div 
+                          *ngIf="submitted && CourseFormAdd.controls.courseName.errors"
+                          class="invalid-feedback">
+                              <div *ngIf="CourseFormAdd.controls.courseName.errors.required"> Select main topic </div>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+            <button
+              class="btn btn-default"
+              style="background-color: #f8f9fa; border-color: #ddd; color: #444;"
+              (click)="onDialogClose('addCourse')"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              class="btn btn-primary"
+              (click)="addCourse(user.id)"
+            >
+              Save
+            </button>
+          </div>
+    </div>
+</div>

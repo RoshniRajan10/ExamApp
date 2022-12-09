@@ -1,0 +1,203 @@
+<div>
+  <div class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2"></div>
+    </div>
+  </div>
+  <section class="content">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-lg-3 col-6">
+          <div class="small-box bg-info">
+            <div class="inner">
+              <h3 *ngIf="TotalNoOfExam>0">{{ TotalNoOfExam }}</h3>
+
+              <p>Exam</p>
+            </div>
+            <div class="icon">
+              <i class="fa fa-list-alt"></i>
+            </div>
+            <a
+              (click)="viewExam()"
+              style="cursor: pointer;"
+              class="small-box-footer"
+              >More info <i class="fas fa-arrow-circle-right"></i
+            ></a>
+          </div>
+        </div>
+        <div class="col-lg-3 col-6">
+          <div class="small-box bg-success">
+            <div class="inner">
+              <h3>
+                {{ totalNoOfStudyMaterial }}<sup style="font-size: 20px;"></sup>
+              </h3>
+
+              <p>Study Material</p>
+            </div>
+            <div class="icon">
+              <i class="fa fa-list-alt"></i>
+            </div>
+            <a
+              (click)="viewStudyMaterial()"
+              style="cursor: pointer;"
+              class="small-box-footer"
+              >More info <i class="fas fa-arrow-circle-right"></i
+            ></a>
+          </div>
+        </div>
+        <div class="col-lg-3 col-6">
+          <div class="small-box bg-warning">
+            <div class="inner">
+              <h3>{{ this.TotalNoOfUsers }}</h3>
+
+              <p>Users</p>
+            </div>
+            <div class="icon">
+              <i class="ion ion-person-add"></i>
+            </div>
+            <a
+              (click)="viewUsers()"
+              style="cursor: pointer;"
+              class="small-box-footer"
+              >More info <i class="fas fa-arrow-circle-right"></i
+            ></a>
+          </div>
+        </div>
+        <div class="col-lg-3 col-6">
+          <div class="small-box bg-danger">
+            <div class="inner">
+              <h3>{{ AllPracticeListCount }}</h3>
+
+              <p>Practice</p>
+            </div>
+            <div class="icon">
+              <i class="fa fa-list-alt"></i>
+            </div>
+            <a
+              (click)="viewPractice()"
+              style="cursor: pointer;"
+              class="small-box-footer"
+              >More info <i class="fas fa-arrow-circle-right"></i
+            ></a>
+          </div>
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-md-6">
+          <div class="card">
+            <div class="card-header border-transparent">
+              <h3 class="card-title">Current Affairs</h3>
+            </div>
+            <div class="card-body p-0">
+              <app-loader [show]="isCurAffLoading" ></app-loader>
+              <div class="table-responsive">
+                <table class="table m-0">
+                  <thead>
+                    <tr>
+                      <th>Title</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr
+                      *ngFor="
+                        let item of currentAffairList
+                          | paginate: { itemsPerPage: 7, currentPage: pageNo }
+                      "
+                    >
+                      <td>{{ item.title }}</td>
+
+                      <td *ngIf="item.isPublished == true">
+                        <div
+                          class="sparkbar"
+                          style="color: green;"
+                          data-height="20"
+                        >
+                          Published
+                        </div>
+                      </td>
+                      <td *ngIf="item.isPublished == false">
+                        <div
+                          class="sparkbar"
+                          style="color: red;"
+                          data-height="20"
+                        >
+                          Not Published
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div
+              class="card-footer clearfix"
+              style="background-color: darkgray;"
+            >
+              <a
+                (click)="viewAllCurrentAffair()"
+                style="cursor: pointer; margin-left: 158px;"
+                >VIEW ALL CURRENT AFFAIRS</a
+              >
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">Recently Added Videos</h3>
+            </div>
+            <div class="card-body p-0">
+              <app-loader [show]="isCurAffLoading" ></app-loader>
+              <ul class="products-list product-list-in-card pl-2 pr-2">
+                <li
+                  class="item"
+                  *ngFor="
+                    let item of allVideoItems
+                      | paginate: { itemsPerPage: 5, currentPage: pageNo }
+                  "
+                >
+                  <div class="product-img col-md-5">
+                    {{ item.title }}
+                  </div>
+                  <div class="product-info">
+                    <i
+                      aria-hidden="true"
+                      style="
+                        cursor: pointer;
+                        color: indianred;
+                        margin-left: 180px;
+                      "
+                    >
+                      <img
+                        [src]="
+                          item.thumbnail_url
+                            ? item.thumbnail_url
+                            : 'assets/img/youtube-default_2.jpg'
+                        "
+                        height="42"
+                        width="42"
+                        style="width: 89px; height: 53px;"
+                      />
+                    </i>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div
+              class="card-footer text-center"
+              style="background-color: darkgray;"
+            >
+              <a
+                (click)="ViewAllVideos()"
+                style="cursor: pointer;"
+                class="uppercase"
+                >VIEW ALL VIDEOS</a
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

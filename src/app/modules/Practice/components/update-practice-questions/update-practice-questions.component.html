@@ -1,0 +1,468 @@
+<!-- <button mat-raised-button (click)="isLinear = !isLinear" id="toggle-linear">
+  {{!isLinear ? 'Enable linear mode' : 'Disable linear mode'}}
+</button> -->
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <!-- left column -->
+      <div class="col-md-12">
+        <!-- general form elements -->
+        <div class="card card-primary mt-2">
+          <div class="card-header">
+            <h3 class="card-title">Update Questions</h3>
+          </div>
+
+          <mat-horizontal-stepper linear #stepper>
+            <mat-step [stepControl]="firstFormGroup">
+              <form [formGroup]="firstFormGroup">
+                <ng-template matStepLabel>Practice Details</ng-template>
+                <div class="row">
+                  <div class="col-6">
+                    <ul class="list-group list-group-flush">
+                      <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <strong>Category Name: </strong>{{ categoryNames }}
+                      </li>
+                      <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <strong>Practice Name: </strong>{{ practiceNames }}
+                      </li>
+                    </ul>
+                  </div>
+                  <div class="col-6">
+                    <ul class="list-group list-group-flush">
+                      <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <strong>Subcategory Name: </strong>{{ subCategoryNames }}
+                      </li>
+                      <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <strong>Total No Of Questions: </strong>{{ totalNoOfQuestion }}
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+                <div class="d-flex justify-content-end">
+                  <button
+                    mat-button
+                    (click)="Goback()"
+                    class="btn btn-secondary mr-1"
+                  >
+                    Cancel
+                  </button> 
+                  <button
+                    mat-button
+                    matStepperNext
+                    class="btn btn-primary"
+                  >
+                    Next
+                  </button>
+                </div>
+              </form>
+            </mat-step>
+            <mat-step [stepControl]="questionForm">
+              <form [formGroup]="questionForm">
+                <ng-template matStepLabel>Update Questions</ng-template>
+
+                <div class="row mb-3">
+                  <div class="col-6">
+                    <label>Question <span style="color: red;">*</span></label>
+                    <textarea
+                      type="text"
+                      class="form-control"
+                      formControlName="question"
+                      [(ngModel)]="question"
+                      required
+                      [ngClass]="{
+                        'is-invalid': submitted && questionform.question.errors
+                      }"
+                    >
+                    </textarea>
+                    <div
+                      *ngIf="submitted && questionform.question.errors"
+                      class="invalid-feedback"
+                    >
+                      <div *ngIf="questionform.question.errors.required">
+                        Question is required
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-6">
+                    <label>Question Hint </label>
+                    <textarea
+                      type="text"
+                      class="form-control"
+                      formControlName="hint"
+                      [(ngModel)]="hint"
+                      rows="5"
+                      [ngClass]="{
+                        'is-invalid': submitted && questionform.hint.errors
+                      }"
+                    >
+                    </textarea>
+                  </div>
+                </div>
+                <div class="row mb-3">
+                  <div class="col-md-12">
+                    <label>Difficulty <span style="color: red;">*</span></label>
+                    <ng5-slider
+                      [(value)]="value"
+                      [options]="options"
+                      [(ngModel)]="difficulty"
+                      formControlName="difficulty"
+                    ></ng5-slider>
+                    <div
+                      *ngIf="submitted && questionform.difficulty.errors"
+                      class="invalid-feedback"
+                    >
+                      <div *ngIf="questionform.difficulty.errors.required">
+                        Choose difficulty range
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="row mb-3">
+                  <div class="col-6">
+                    <mat-form-field class="example-chip-list">
+                      <mat-label>Question Tags</mat-label>
+                      <mat-chip-list #chipList aria-label="qstnTag selection">
+                        <mat-chip
+                          *ngFor="let qstnTag of qstnTags"
+                          [selectable]="selectable"
+                          [removable]="removable"
+                          (removed)="remove(qstnTag)">
+                          {{qstnTag}}
+                          <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
+                        </mat-chip>
+                        <input
+                          placeholder="New question tag..."
+                          #qstnTagInput
+                          [formControl]="qstnTagsCtrl"
+                          [matAutocomplete]="auto"
+                          [matChipInputFor]="chipList"
+                          [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                          (matChipInputTokenEnd)="add($event)">
+                      </mat-chip-list>
+                      <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selected($event)">
+                        <mat-option *ngFor="let qstnTag of filteredqstnTags | async" [value]="qstnTag">
+                          {{qstnTag}}
+                        </mat-option>
+                      </mat-autocomplete>
+                    </mat-form-field>
+                  </div>
+                  <div class="col-6">
+                    <mat-form-field class="example-chip-list">
+                      <mat-label>Sub Tag</mat-label>
+                      <mat-chip-list #chipListsubTag aria-label="subqstnTag selection">
+                        <mat-chip
+                          *ngFor="let subqstnTag of subqstnTags"
+                          [selectable]="selectable"
+                          [removable]="removable"
+                          (removed)="removeSubTag(subqstnTag)">
+                          {{subqstnTag}}
+                          <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
+                        </mat-chip>
+                        <input
+                          placeholder="Sub Tags"
+                          #subqstnTagInput
+                          [formControl]="subqstnTagsCtrl"
+                          [matAutocomplete]="autoSub"
+                          [matChipInputFor]="chipListsubTag"
+                          [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                          (matChipInputTokenEnd)="addsubQstnTag($event)">
+                      </mat-chip-list>
+                      <mat-autocomplete #autoSub="matAutocomplete" (optionSelected)="selectedSbTags($event)">
+                        <mat-option *ngFor="let subqstnTag of filteredsubqstnTags | async" [value]="subqstnTag">
+                          {{subqstnTag}}
+                        </mat-option>
+                      </mat-autocomplete>
+                    </mat-form-field>
+                  </div>
+                </div>
+                <div class="row mb-3">
+                  <div class="col-6">
+                    <label>Marks <span style="color: red;">*</span> </label>
+                    <select
+                      class="form-control"
+                      formControlName="marks"
+                      [(ngModel)]="marks"
+                      [attr.disabled]="disabled"
+                      required
+                      [ngClass]="{
+                        'is-invalid': submitted && questionform.marks.errors
+                      }"
+                    >
+                      <option value="">Select Marks</option>
+                      <option value="1">1 Mark</option>
+                      <option value="2">2 Marks</option>
+                      <option value="3">3 Marks</option>
+                      <option value="4">4 Marks</option>
+                      <option value="5">5 Marks</option>
+                      <option value="10">10 Marks</option>
+                      <option value="15">15 Marks</option>
+                    </select>
+                    <div
+                      *ngIf="submitted && questionform.marks.errors"
+                      class="invalid-feedback"
+                    >
+                      <div *ngIf="questionform.marks.errors.required">
+                        Mark is required
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-6">
+                    <label>
+                      Negative Marks <span style="color: red;">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      placeholder="Negative Marks"
+                      formControlName="negativeMarks"
+                      [attr.disabled]="disabled"
+                      [(ngModel)]="negativeMarks"
+                      (input)="checkNegativeMark()"
+                      required
+                      [ngClass]="{
+                        'is-invalid':
+                          submitted && questionform.negativeMarks.errors
+                      }"
+                    />
+                    <div
+                      *ngIf="submitted && questionform.negativeMarks.errors"
+                      class="invalid-feedback"
+                    >
+                      <div *ngIf="questionform.negativeMarks.errors.required">
+                        Negative mark is required
+                      </div>
+                    </div>
+                    <div *ngIf="negativeValidation === true">
+                      <span style="color: red;">Please insert valid entry</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="d-flex justify-content-end">
+                  <button
+                    mat-button
+                    (click)="Goback()"
+                    class="btn btn-secondary mr-1"
+                  >
+                    Cancel
+                  </button> 
+                  <button
+                    mat-button
+                    matStepperPrevious
+                    class="btn btn-info mr-1"
+                  >
+                    Back
+                  </button>
+                  <button
+                    mat-button
+                    matStepperNext
+                    class="btn btn-primary"
+                    [disabled]="negativeValidation && submitted"
+                    (click)="checkValidation()"
+                  >
+                    Next
+                  </button>
+                </div>
+              </form>
+            </mat-step>
+            <mat-step [stepControl]="optionForm">
+              <form [formGroup]="optionForm">
+                <ng-template matStepLabel>Update Options</ng-template>
+                <div formArrayName="options">
+                  <div class="row mb-3">
+                    <div class="col-6">
+                      <label>Options <span style="color: red;">*</span></label>
+                    </div>
+                    <div class="col-6">
+                      <label>Right Answer <span style="color: red;">*</span></label>
+                    </div>
+                  </div>
+                  
+                  
+                  <div
+                    class="row mb-3"
+                    *ngFor="let group of optionsList.controls; let i = index"
+                    [formGroupName]="i"
+                  >
+                    <div class="col-6">
+                      <input
+                        type="text"
+                        class="form-control"
+                        formControlName="option"
+                        required
+                        [ngClass]="{
+                          'is-invalid':
+                            submitted && group.controls.option.errors
+                        }"
+                      />
+                      <div
+                        *ngIf="submitted && group.controls.option.errors"
+                        class="invalid-feedback"
+                      >
+                        <div *ngIf="group.controls.option.errors.required">
+                          option is required
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-6">
+                      <input
+                        class="form-check-input mr-2"
+                        type="checkbox"
+                        (change)="checkRightAnswer($event, i)"
+                        formControlName="rightAnswer"
+                      />
+                      <span (click)="removeArrayForms(i)">
+                        <a
+                          data-toggle="tooltip"
+                          title="Remove this option"
+                        >
+                          <i
+                            class="fa fa-times delete-botton"
+                            aria-hidden="true"
+                          ></i>
+                        </a>
+                      </span>
+                    </div>
+                  </div>
+                  <div class="row mb-3">
+                    <div class="col-3">
+                      <button class="btn btn-dark btn-sm" type="button" (click)="addOptions()">
+                        Add More
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                <div class="d-flex justify-content-end">
+                  <button
+                    mat-button
+                    (click)="Goback()"
+                    class="btn btn-secondary mr-1"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    mat-button
+                    matStepperPrevious
+                    class="btn btn-info mr-1"
+                  >
+                    Back
+                  </button>
+                  <button
+                    mat-button
+                    class="btn btn-primary"
+                    (click)="checkOptionValidation(stepper)"
+                  >
+                    Next
+                  </button>
+                </div>
+              </form>
+            </mat-step>
+            <mat-step [stepControl]="solutionForm">
+              <form [formGroup]="solutionForm">
+                <ng-template matStepLabel>Update Solutions</ng-template>
+                <div class="col-12">
+                  <div class="row">
+                    <div class="col-6">
+                      <div formArrayName="solutions">
+                        <div class="d-flex flex-row mb-2">
+                          <label>Solution :</label>
+                        </div>
+                        <div
+                          class="d-flex flex-row mb-2"
+                          *ngFor="let group of solutionList.controls; let i = index"
+                          [formGroupName]="i"
+                        >
+                          <textarea
+                            type="text"
+                            class="form-control"
+                            formControlName="solution"
+                            rows="3"
+                          ></textarea>
+                          <span (click)="removeSolutionArrayForms(i)">
+                            <a
+                              data-toggle="tooltip"
+                              style="border: none;"
+                              title="Remove this solution"
+                            >
+                              <i
+                                class="fa fa-times delete-botton"
+                                aria-hidden="true"
+                              ></i> </a
+                          ></span>
+                        </div>
+                        <div class="d-flex flex-row mb-2">
+                          <button class="btn btn-dark btn-sm" type="button" (click)="addSolutions()">
+                            Add More
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-6">
+                      <div formArrayName="bestSolutions">
+                        <div class="d-flex flex-row mb-2">
+                          <label>Add Best Solution :</label>
+                        </div>
+                        <div
+                          class="d-flex flex-row mb-2"
+                          *ngFor="
+                            let group of bestSolutionList.controls;
+                            let i = index
+                          "
+                          [formGroupName]="i"
+                        >
+                          <input
+                            type="text"
+                            class="form-control"
+                            formControlName="solution"
+                          />
+                          <span (click)="removeBestSolutionArrayForms(i)">
+                            <a
+                              data-toggle="tooltip"
+                              title="Remove this best solution"
+                            >
+                              <i
+                                class="fa fa-times delete-botton"
+                                aria-hidden="true"
+                              ></i></a
+                          ></span>
+                        </div>
+                        <div class="d-flex flex-row mb-2">
+                          <button class="btn btn-dark btn-sm" type="button" (click)="addBestSolutions()">
+                            Add Best Solutions
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="d-flex justify-content-end">
+                  <button
+                      mat-button
+                      (click)="Goback()"
+                      class="btn btn-secondary mr-1"
+                    >
+                      Cancel
+                  </button>
+                  <button
+                    mat-button
+                    matStepperPrevious
+                    class="btn btn-info mr-1"
+                  >
+                    Back
+                  </button>
+                  <button
+                    mat-button
+                    class="btn btn-primary"
+                    [disabled]="practiceResults == true"
+                    (click)="UpdateQuestion()"
+                  >
+                    Update
+                  </button>
+                </div>
+              </form>
+            </mat-step>
+          </mat-horizontal-stepper>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

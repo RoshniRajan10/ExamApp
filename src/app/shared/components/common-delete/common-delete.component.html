@@ -1,0 +1,31 @@
+<div
+  class="modal fade"
+  id="showDeleteDialog"
+  aria-hidden="true"
+  style="display: none;"
+>
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-body">
+        <span *ngIf="item" [innerHtml]="deleteMessage"></span>
+      </div>
+      <div class="modal-footer">
+        <button
+          type="button"
+          id="delImage"
+          class="btn btn-secondary"
+          data-dismiss="modal">
+            Cancel
+        </button>
+        <button
+          type="button"
+          id="saveImage"
+          class="btn btn-primary"
+          (click)="deleteData(item.section, item.sectionItems)"
+          role="button">
+            Confirm
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

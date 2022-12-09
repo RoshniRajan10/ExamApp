@@ -1,0 +1,275 @@
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <!-- left column -->
+      <div class="col-md-12">
+        <!-- general form elements -->
+        <div class="card card-primary mt-2">
+          <div class="card-header">
+            <h3 class="card-title">Update Study Material</h3>
+          </div>
+          <mat-horizontal-stepper linear #stepper>
+            <mat-step [stepControl]="firstFormGroup">
+              <form [formGroup]="firstFormGroup">
+                <ng-template matStepLabel>Study Material Details</ng-template>
+                <div class="row">
+                  <div class="col-6">
+                    <ul class="list-group list-group-flush">
+                      <li class="list-group-item d-flex align-items-start">
+                        <strong class="mr-3">Main Topic: </strong>{{ categoryName }}
+                      </li>
+                      <li class="list-group-item d-flex align-items-start">
+                        <strong class="mr-3">Material Name: </strong>{{ studyMaterialName }}
+                      </li>
+                    </ul>
+                  </div>
+                  <div class="col-6">
+                    <ul class="list-group list-group-flush">
+                      <li class="list-group-item d-flex align-items-start">
+                        <strong class="mr-3">Sub Topic: </strong>{{ subCategoryName }}
+                      </li>
+                      <li class="list-group-item d-flex align-items-start">
+                        <strong class="mr-3">Description: </strong>
+                        <span [innerHtml]="description"></span>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+                <!-- <div class="row">
+                  <div class="col-6">
+                    <label>Main Topic </label>
+                    <span class="col-ml-5">{{
+                      categoryName
+                    }}</span>
+                  </div>
+                  <div class="col-md-5">
+                    <label>
+                      Sub Topic
+                    </label>
+                    <span class="col-ml-5" style="margin-left: 20px;">{{
+                      subCategoryName
+                    }}</span>
+                  </div>
+                </div>
+                <br />
+                <div class="row ml-5">
+                  <div class="col-md-5">
+                    <label>Material Name</label>
+                    <span class="col-ml-5" style="margin-left: 20px;">{{
+                      studyMaterialName
+                    }}</span>
+                  </div>
+                </div>
+                <br />
+                <div class="row ml-5">
+                  <div class="col-md-10" disabled>
+                    <label style="margin-left: 3px;">
+                      Description
+                    </label>
+                    <span
+                      style="margin-left: 76px;"
+                      [innerHtml]="description"
+                    ></span>
+                  </div>
+                </div> -->
+
+                <div class="d-flex justify-content-end">
+                  <button
+                    mat-button
+                    (click)="GoBack()"
+                    class="btn btn-secondary mr-1"
+                  >
+                    Cancel
+                  </button> 
+                  <button
+                    mat-button
+                    matStepperNext
+                    class="btn btn-primary"
+                  >
+                    Next
+                  </button>
+                </div>
+              </form>
+            </mat-step>
+            <mat-step [stepControl]="UpdateStudyMaterialForm">
+              <form [formGroup]="UpdateStudyMaterialForm">
+                <ng-template matStepLabel>Update Study Material</ng-template>
+                <div class="row mb-3">
+                  <div class="col-6">
+                    <label>Title<span style="color: red;">*</span> </label>
+                    <input
+                      type="text"
+                      placeholder="Title"
+                      class="form-control float-left"
+                      required
+                      formControlName="title"
+                      [(ngModel)]="title"
+                      [ngClass]="{
+                        'is-invalid':
+                          submitted && StudyMaterialform.title.errors
+                      }"
+                    />
+                    <div
+                      *ngIf="submitted && StudyMaterialform.title.errors"
+                      class="invalid-feedback"
+                    >
+                      <div *ngIf="StudyMaterialform.title.errors.required">
+                        Title is required
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="row mb-3">
+                  <div class="col-12">
+                    <div class="form-group">
+                      <div class="checkbox">
+                        <label>
+                          Do you want description: 
+                          <input
+                            type="checkbox"
+                            formControlName="hasText"
+                            [(ngModel)]="hasText"
+                            disabled
+                            (change)="addDescription($event)"
+                          />
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="row mb-3">
+                  <div class="col-12">
+                    <label>Description <span style="color: red;">*</span></label>
+                    <ejs-richtexteditor
+                      type="text"
+                      class="form-control"
+                      [(ngModel)]="descriptions"
+                      formControlName="description"
+                      required
+                      rows="5"
+                      [ngClass]="{
+                        'is-invalid':
+                          submitted && StudyMaterialform.description.errors
+                      }"
+                    >
+                    </ejs-richtexteditor>
+                    <div
+                      *ngIf="submitted && StudyMaterialform.description.errors"
+                      class="invalid-feedback"
+                    >
+                      <div *ngIf="StudyMaterialform.description.errors.required">
+                        Description is required
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="row mb-3">
+                  <div class="col-12">
+                    <label>Pdf</label>
+                    <input
+                      type="file"
+                      name="materialPdf"
+                      (change)="uploadPdf($event)"
+                    />
+                    <input
+                      type="hidden"
+                      name=""
+                      formControlName="materialPdf"
+                      [(ngModel)]="materialPdf"
+                      [ngClass]="{
+                        'is-invalid':
+                          submitted && StudyMaterialform.materialPdf.errors
+                      }"
+                    />
+                    <input
+                      type="text"
+                      name=""
+                      formControlName="materialPdfName"
+                      [(ngModel)]="materialPdfName"
+                    />
+                  </div>
+                </div>
+
+                <div class="row mb-3">
+                  <div class="col-6">
+                    <div class="form-group">
+                      <div class="checkbox">
+                        <label>
+                          Do you want Image Link: 
+                          <input
+                            type="checkbox"
+                            class="float-left"
+                            formControlName="hasImage"
+                            [(ngModel)]="hasImage"
+                            (change)="addImageLink($event)"
+                          />
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <br />
+                <div class="row mb-3">
+                  <div class="col-12" *ngIf="hasImage">
+                    <label>
+                      Image Link
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      class="form-control float-left"
+                      formControlName="imageLink"
+                      [(ngModel)]="imageLink"
+                      [ngClass]="{
+                        'is-invalid':
+                          submitted && StudyMaterialform.imageLink.errors
+                      }"
+                    />
+                    <div
+                      *ngIf="submitted && StudyMaterialform.imageLink.errors"
+                      class="invalid-feedback"
+                    >
+                      <div *ngIf="StudyMaterialform.imageLink.errors.required">
+                        Image link is required
+                      </div>
+                    </div>
+
+                    <div
+                      *ngIf="StudyMaterialform.imageLink.errors?.pattern"
+                      style="color: red;"
+                    >
+                      Enter Valid link
+                    </div>
+                  </div>
+                </div>
+                <div class="d-flex justify-content-end">
+                  <button
+                    mat-button
+                    (click)="GoBack()"
+                    class="btn btn-secondary mr-1"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    mat-button
+                    matStepperPrevious
+                    class="btn btn-info mr-1"
+                  >
+                    Back
+                  </button>
+                  <button
+                    mat-button
+                    class="btn btn-primary"
+                    (click)="updateStudyMaterial()"
+                  >
+                    Update
+                  </button>
+                </div>
+              </form>
+            </mat-step>
+          </mat-horizontal-stepper>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

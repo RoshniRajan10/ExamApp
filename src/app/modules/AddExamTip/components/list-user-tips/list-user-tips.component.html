@@ -1,0 +1,190 @@
+<section class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <h1>
+          Exam Tips
+        </h1>
+      </div>
+      <div class="col-sm-12">
+        <button
+          type="button"
+          class="btn btn-primary float-right"
+          (click)="addExamTips()"
+        >
+          Add Exam Tips
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+<div *ngIf="isDataLoaded">
+  <div class="col-md-12">
+    <div class="row">
+      <div class="col-md-4">
+        <input
+          type="text"
+          class="form-control"
+          (input)="onSearchChange($event.target.value)"
+          placeholder="Search Exam Tips"
+          [(ngModel)]="serachExamTip"
+        />
+      </div>
+      <div class="col-md-3">
+        <form [formGroup]="addExamTipForm" action="" class="">
+          <select
+            formControlName="categoryName"
+            (change)="changeCategory()"
+            class="form-control"
+          >
+            <option value="">Select Main Topic</option>
+            <option *ngFor="let item of MainTopicList" [ngValue]="item">{{
+              item.categoryName
+            }}</option>
+          </select>
+        </form>
+      </div>
+      <div class="col-md-3">
+        <div class="form-group">
+          <button
+            class="btn btn-info"
+            (click)="resetFilter()"
+          >
+            Reset
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <section class="content">
+    <div
+      class="container-fluid"
+      *ngIf="
+        alluserTipList && (alluserTipList | filter: serachExamTip).length > 0;
+        else noDataFound
+      "
+    >
+      <div class="card tex">
+        <div class="card-body p-0">
+          <div class="table-responsive table-wrapper-scroll-y my-custom-scrollbar">
+            <table class="table m-0">
+              <thead class="thead">
+                <tr *ngIf="alluserTipList.length > 0">
+                  <!-- <th>#</th> -->
+                  <th class="row-color">
+                    Title &nbsp;<i
+                      class="fa fa-arrow-up arrow"
+                      (click)="onPageSortDesc()"
+                      style="cursor: pointer;"
+                    >
+                    </i
+                    >&nbsp;
+                    <i
+                      class="fa fa-arrow-down arrow"
+                      (click)="onPageSortAsc()"
+                      style="cursor: pointer;"
+                    ></i>
+                  </th>
+                  <th class="row-color">Description</th>
+                  <th class="row-color"></th>
+                  <th class="row-color"></th>
+                </tr>
+              </thead>
+              <tbody class="scrollit">
+                <tr
+                  *ngFor="
+                  let item of alluserTipList | keyvalue | filter: serachExamTip
+                  | paginate: { itemsPerPage: itemsPerPage, currentPage: pageNo };;
+                  let i = index
+                "
+                >
+                  <!-- <td>{{ i + 1 }}</td> -->
+                  <td class="text" width="30%">
+                    {{ item.value.examTipName }}
+                  </td>
+                  <td
+                    width="60%"
+                    class="text"
+                    [innerHTML]="item.value.examTipDescription"
+                  ></td>
+
+                  <td width="10%">
+                    <span
+                      (click)="
+                        onUpdatexamTip(
+                          item.value.categoryKey,
+                          item.value.userTipKey
+                        )
+                      "
+                      ><a
+                        data-toggle="tooltip"
+                        title="Edit this exam tip"
+                        ><i class="fas fa-edit edit-botton mr-2"></i></a
+                    ></span>
+                    <span
+                      (click)="
+                        onDeleteExamTip(
+                          item.value.categoryKey,
+                          item.value.userTipKey
+                        )
+                      "
+                      ><a
+                        data-toggle="tooltip"
+                        style="border: none;"
+                        title="Delete this exam tip"
+                      >
+                        <i
+                          class="fa fa-trash delete-botton mr-2"
+                          aria-hidden="true"
+                        ></i></a
+                    ></span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="card-footer clearfix" 
+            *ngIf="alluserTipList && alluserTipList.length > 0">
+          <div class="d-flex p-2 justify-content-end">
+            <div class="mr-1">
+              <select
+                class="form-control form-control-sm"
+                [(ngModel)]="itemsPerPage"
+                >
+                <option *ngFor="let item of itemsPerPageValues" [ngValue]="item">{{
+                  item
+                }}</option>
+              </select>
+            </div>
+            <div class="mr-1">
+              <input type="number" 
+                class="input" 
+                min="0" 
+                (change)="checkPageNumber($event)"
+                (keyup)="checkPageNumber($event)"
+                [(ngModel)]="pageNoBind"
+                placeholder="Go to"
+                class="form-control form-control-sm">
+            </div>
+            <div class="mr-1">
+              <pagination-controls
+                class="float-right"
+                (pageChange)="pageNo = $event && pageNoBind = $event"
+                [maxSize]="pageMaxSize"
+                (pageBoundsCorrection)="onPageBoundsCorrection($event)">
+              </pagination-controls>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <ng-template #noDataFound>
+      <app-data-not-found [noDataMsg]="noDataMsg"></app-data-not-found>
+    </ng-template>
+  </section>
+</div>
+
+
+
+<app-common-delete [item]="deleteItem"></app-common-delete>

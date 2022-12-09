@@ -1,0 +1,153 @@
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <!-- left column -->
+      <div class="col-md-12">
+        <!-- general form elements -->
+        <div class="card card-primary mt-3">
+          <div class="card-header">
+            <h3 class="card-title">FAQ</h3>
+          </div>
+          <div class="card-body">
+            <form [formGroup]="addFaqForm" action="">
+              <div class="row mb-3" *ngIf="subCatKey">
+                <div class="col-6">
+                  <label>Main Topic: </label>
+                  <span>{{ categoryName }}</span>
+                </div>
+                <div class="col-6">
+                  <label>Sub Topic: </label>
+                  <span>{{ subCategoryName }}</span>
+                </div>
+              </div>
+              <div
+                class="row mb-2"
+                *ngIf="subCatKey == '' || subCatKey == undefined"
+              >
+                <div class="col-6">
+                  <label>Select main Topic <span style="color: red;">*</span></label>
+                  <select
+                    formControlName="categoryName"
+                    (change)="changeCategory()"
+                    class="form-control"
+                    required
+                    [ngClass]="{
+                      'is-invalid': submitted && addFaqform.categoryName.errors
+                    }"
+                  >
+                    <option value="">Select main topic</option>
+                    <option *ngFor="let item of MainTopicList" [ngValue]="item">
+                      {{ item.categoryName }}
+                    </option>
+                  </select>
+                  <div
+                    *ngIf="submitted && addFaqform.categoryName.errors"
+                    class="invalid-feedback"
+                  >
+                    <div *ngIf="addFaqform.categoryName.errors.required">
+                      Category Name is required
+                    </div>
+                  </div>
+                </div>
+                <div class="col-6">
+                  <label>Select sub topic<span style="color: red;">*</span></label>
+                  <select
+                    formControlName="subCategoryName"
+                    class="form-control"
+                    required
+                    [ngClass]="{
+                      'is-invalid': submitted && addFaqform.subCategoryName.errors
+                    }"
+                  >
+                    <option value="">Select sub topic</option>
+                    <option
+                      *ngFor="let item1 of subatname"
+                      [ngValue]="item1"
+                      [selected]="item1.subCategory === subCategoryName1"
+                      >{{ item1.subCategory }}</option
+                    >
+                  </select>
+                  <div
+                    *ngIf="submitted && addFaqform.subCategoryName.errors"
+                    class="invalid-feedback"
+                  >
+                    <div *ngIf="addFaqform.subCategoryName.errors.required">
+                      Sub category Name is required
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row mb-2">
+                <div class="col-12">
+                  <label>Question <span style="color: red;">*</span></label>
+                  <ejs-richtexteditor
+                    type="text"
+                    class="form-control"
+                    formControlName="fQuestion"
+                    rows="5"
+                    required
+                    [ngClass]="{
+                      'is-invalid': submitted && addFaqform.fQuestion.errors
+                    }"
+                  >
+                  </ejs-richtexteditor>
+                  <div
+                    *ngIf="submitted && addFaqform.fQuestion.errors"
+                    class="invalid-feedback"
+                  >
+                    <div *ngIf="addFaqform.fQuestion.errors.required">
+                      Description is required
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row mb-2">
+                <div class="col-12">
+                  <label>Answer <span style="color: red;">*</span></label>
+                  <ejs-richtexteditor
+                    type="text"
+                    class="form-control"
+                    formControlName="fAnswer"
+                    rows="5"
+                    required
+                    [ngClass]="{
+                      'is-invalid': submitted && addFaqform.fAnswer.errors
+                    }"
+                  >
+                  </ejs-richtexteditor>
+                  <div
+                    *ngIf="submitted && addFaqform.fAnswer.errors"
+                    class="invalid-feedback"
+                  >
+                    <div *ngIf="addFaqform.fAnswer.errors.required">
+                      Description is required
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+          <div class="card-footer d-flex justify-content-end">
+            <button class="btn btn-secondary mr-2" (click)="gotoList()">
+              Cancel
+            </button>
+            <button
+              *ngIf="subCatKey == '' || subCatKey == undefined"
+              type="button"
+              class="btn btn-primary mr-2"
+              (click)="addFaq()">
+              Save
+            </button>
+            <button
+              *ngIf="subCatKey"
+              type="button"
+              class="btn btn-primary mr-2"
+              (click)="updateFaq()">
+              Update
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

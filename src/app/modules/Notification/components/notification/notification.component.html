@@ -1,0 +1,76 @@
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card card-primary mt-3">
+          <div class="card-header">
+            <h3 class="card-title">Push Notification</h3>
+          </div>
+          <div class="card-body">
+            <form [formGroup]="notificationForm">
+              <div class="row">
+                <div class="col-12">
+                  <div class="col-12">
+                    <label>Title <span style="color: red;">*</span></label>
+                  </div>
+                  <div class="col-12">
+                    <input
+                      type="text"
+                      class="form-control"
+                      formControlName="title"
+                      required
+                      [ngClass]="{
+                        'is-invalid': submitted && notificationform.title.errors
+                      }"
+                    />
+                    <div
+                      *ngIf="submitted && notificationform.title.errors"
+                      class="invalid-feedback"
+                    >
+                      <div *ngIf="notificationform.title.errors.required">
+                        Title is required
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row mb-2">
+                <div class="col-12">
+                  <div class="col-12">
+                    <label>Message <span style="color: red;">*</span></label>
+                  </div>
+                  <div class="col-12">
+                    <textarea
+                      formControlName="message"
+                      class="form-control"
+                      rows="5"
+                      [ngClass]="{
+                        'is-invalid': submitted && notificationform.message.errors
+                      }"
+                    ></textarea>
+                    <div
+                      *ngIf="submitted && notificationform.message.errors"
+                      class="invalid-feedback"
+                    >
+                      <div *ngIf="notificationform.message.errors.required">
+                        Message is required
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+          <div class="card-footer d-flex justify-content-end">
+            <button
+              type="button"
+              class="btn btn-primary"
+              (click)="sendNotification()">
+              Send Notification
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

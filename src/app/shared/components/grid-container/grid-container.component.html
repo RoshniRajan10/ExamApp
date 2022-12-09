@@ -1,0 +1,70 @@
+<section class="content">
+  <div class="container-fluid">
+    <div class="card tex">
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          <table class="table m-0">
+            <thead>
+              <tr>
+                <th *ngFor="let header of gridHeaders">
+                  {{ header }}
+                </th>
+              </tr>
+            </thead>
+            <tbody class="scrollit">
+              <tr *ngFor="let dataItem of dataSource">
+                <td class="text" *ngFor="let item of dataItem | keyvalue">
+                  {{ item.value }}
+                </td>
+
+                <!-- <td style="cursor: pointer;" *ngIf="item.isPublished == true">
+                  <span (click)="onUpdateUnpublish(item.$key)"
+                    ><a
+                      data-toggle="tooltip"
+                      style="border: none; color: aquamarine;"
+                      title="Unpublish this parent topic"
+                      ><i class="fas fa-eye ml-3"></i></a
+                  ></span>
+                </td>
+                <td style="cursor: pointer;" *ngIf="item.isPublished == false">
+                  <span (click)="onUpdatePublish(item.$key)"
+                    ><a
+                      data-toggle="tooltip"
+                      style="border: none; color: red;"
+                      title="Publish this parent topic"
+                      ><i class="fas fa-eye-slash ml-3 ml-3"></i></a
+                  ></span>
+                </td>
+
+                <td style="cursor: pointer; color: green;">
+                  <span (click)="onUpdateParentTopic(item.$key)"
+                    ><a
+                      data-toggle="tooltip"
+                      style="border: none;"
+                      title="Edit this parent topic"
+                      ><i class="fas fa-edit ml-2"></i></a
+                  ></span>
+                </td>
+                <td>
+                  <span (click)="onDeleteTopic(item.$key)"
+                    ><a
+                      data-toggle="tooltip"
+                      style="border: none;"
+                      title="Delete this parent topic"
+                    >
+                      <i
+                        class="fa fa-trash ml-3"
+                        aria-hidden="true"
+                        style="cursor: pointer; color: indianred;"
+                      ></i></a
+                  ></span>
+                </td>-->
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="card-footer clearfix"></div>
+    </div>
+  </div>
+</section>

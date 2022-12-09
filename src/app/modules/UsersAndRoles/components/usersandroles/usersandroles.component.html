@@ -1,0 +1,121 @@
+<div *ngIf="listUser">
+  <ngx-spinner type="ball-spin-clockwise-fade" color="#1897ff">
+    <div style="color: white;">Loading..</div>
+  </ngx-spinner>
+  <section class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1>
+            Users and Roles
+          </h1>
+        </div>
+        <div class="col-sm-6">
+          <button
+            type="button"
+            class="btn btn-primary float-right"
+            data-toggle="modal"
+            data-target="#showAddTopicDialog"
+            (click)="addUser()"
+          >
+            Add user
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+  <div class="col-md-12">
+    <div class="row">
+      <div class="col-md-3">
+        <div class="form-group">
+          <input
+            type="text"
+            class="form-control"
+            (input)="onSearchChange($event.target.value)"
+            placeholder="Search User"
+            [(ngModel)]="searchUser"
+          />
+        </div>
+      </div>
+      <div class="col-md-4 pull-left">
+        <button 
+        class="btn btn-default reset com-button"
+        (click)="resetFilter()"
+        >
+          Reset
+        </button>
+      </div>
+    </div>
+  </div>
+  <section class="content mt-3">
+    <div
+      class="container-fluid"
+      *ngIf="allUsers &&(allUsers | filter: searchUser).length > 0;
+        else noDataFound"
+    >
+      <div class="">
+        <div class="card">
+          <div class="card-body p-0">
+            <div class="table-responsive table-wrapper-scroll-y my-custom-scrollbar">
+              <table class="table m-0">
+                <thead class="thead">
+                  <tr>
+                    <th width="5%" class="row-color"> # </th>
+                    <th width="20%" class="row-color"> User Name </th>
+                    <th width="20%" class="row-color"> E-Mail </th>
+                    <th width="550%" class="row-color">Action</th>
+                  </tr>
+                </thead>
+                <tbody class="scrollit">
+                  <tr
+                    *ngFor="
+                    let item of allUsers
+                      | filter: searchUser
+                      | paginate: { itemsPerPage: itemsPerPage, currentPage: pageNo };
+                    let i = index
+                  "
+                  >
+                    <td class="text">{{ (pageNo - 1) * itemsPerPage + i + 1 }}</td>
+                    <td>{{item.name}}</td>
+                    <td>{{item.email}}</td>
+                    <td>
+                      <span class="mr-1" style="cursor: pointer;">
+                        <a
+                        data-toggle="tooltip"
+                        style="border: none; color: #007bff;"
+                        title="Access settings"
+                        >
+                        <i class="fas fa-users-cog ml-3"></i>
+                        </a>
+                      </span>
+                      <span class="mr-1" style="cursor: pointer;">
+                        <a
+                        data-toggle="tooltip"
+                        style="border: none; color: #049b10;"
+                        title="Access settings"
+                        (click)="editUser(item.$key)"
+                        >
+                          <i class="fa fa-edit ml-3"></i>
+                        </a>
+                      </span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <ng-template #noDataFound>
+      <app-data-not-found [noDataMsg]="noDataMsg"></app-data-not-found>
+    </ng-template>
+  </section>
+  <pagination-controls
+    (pageChange)="pageNo = $event"
+    class="float-right"
+    *ngIf="allUsers &&(allUsers | filter: searchUser).length > 10"
+  ></pagination-controls>
+</div>
+<app-adduser (addUserEmiter)="emitFromAddUser($event)" [addUserItems]="addUserItems" *ngIf="actionAddUser"></app-adduser>
+<app-edituser (editUserEmiter)="emitFromEditUser($event)" [editUserItems]="editUserItems" *ngIf="actionEditUser"></app-edituser>

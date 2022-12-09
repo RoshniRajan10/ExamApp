@@ -1,0 +1,196 @@
+<div class="card-body">
+    <div *ngIf="isDataLoaded">
+        <div class="col-md-12">
+            <form [formGroup]="videoSearchForm" action="">
+                <div class="row">
+                    <div class="col-md-3">
+                        <select
+                        formControlName="categoryName"
+                        (change)="changeCategory()"
+                        class="form-control"
+                        [(ngModel)]="searchFilter.mainTopic"
+                        >
+                        <option *ngFor="let item of MainTopicList" [ngValue]="item">{{
+                            item.categoryName
+                        }}</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <select
+                        formControlName="subCategoryName"
+                        (change)="changeSubCategory()"
+                        class="form-control"
+                        [(ngModel)]="searchFilter.subTopic"
+                        >
+                        <option *ngFor="let item1 of subcatname" [ngValue]="item1">{{
+                            item1.subCategory
+                        }}</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <select
+                        formControlName="chapterName"
+                        (change)="changeChapter()"
+                        class="form-control"
+                        [(ngModel)]="searchFilter.chapter"
+                        >
+                        <option *ngFor="let items of chapterItems" [ngValue]="items">{{
+                            items.chapterName
+                        }}</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="d-flex justify-content-end">
+                            <button class="btn btn-info mr-1" 
+                                (click)="resetFilter()">
+                            Reset
+                            </button>
+                            <button class="btn btn-secondary" 
+                                    (click)="back()">
+                                Go Back
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+            <section class="content mt-3">
+                <div
+                class="container-fluid"
+                *ngIf="allVideoItems && allVideoItems.length > 0; else noDataFound"
+                >
+                    <div class="card tex">
+                        <div class="card-body p-0">
+                            <div class="table-responsive">
+                                <table class="table m-0" width="100%">
+                                    <thead>
+                                        <tr *ngIf="allVideoItems.length > 0">
+                                        <th class="row-color">
+                                            Title 
+                                            <i
+                                            class="fa fa-arrow-up arrow mr-2"
+                                            style="cursor: pointer;"
+                                            (click)="onPageSortDesc()"
+                                            >
+                                            </i>
+                                            <i
+                                            class="fa fa-arrow-down arrow"
+                                            style="cursor: pointer;"
+                                            (click)="onPageSortAsc()"
+                                            ></i>
+                                        </th>
+                                        <th colspan="4" class="row-color">Chapter name</th>
+                                        <th colspan="4" class="row-color"></th>
+                                        <th class="row-color"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr
+                                        *ngFor="
+                                            let item of allVideoItems | paginate: { 
+                                                itemsPerPage: itemsPerPage, 
+                                                currentPage: pageNo 
+                                            };
+                                            let i = index;"
+                                            
+                                            >
+                                          <td class="text">
+                                              {{ item.title }}
+                                          </td>
+                                          <td class="text">
+                                              {{ item.chapterName }}
+                                          </td>
+                                          <td>
+                                              <button
+                                              type="button"
+                                              (click)="playVideo(item.embedUrl)"
+                                              class="btn"
+                                              data-toggle="modal"
+                                              data-target="#modalId"
+                                              >
+                                              <a
+                                                  data-toggle="tooltip"
+                                                  style="border: none;"
+                                                  title="Click here to play this video"
+                                              >
+                                                  <i
+                                                  aria-hidden="true"
+                                                  style="cursor: pointer; color: indianred;"
+                                                  >
+                                                  <img
+                                                      [src]="
+                                                      item.thumbnail_url
+                                                          ? item.thumbnail_url
+                                                          : 'assets/img/youtube-default_2.jpg'
+                                                      "
+                                                      height="42"
+                                                      width="42"
+                                                      style="width: 89px; height: 53px;"
+                                                  /> </i
+                                              ></a>
+                                              </button>
+                                          </td>
+                                          <td>
+                                              <span style="cursor: pointer;" *ngIf="item.isPremium == true" class="mr-3">
+                                              <a
+                                                  data-toggle="tooltip"
+                                                  style="border: none; color: #4b4605;"
+                                                  title="Premium Content"
+                                                  ><i class="fas fa-dollar-sign"></i></a
+                                              ></span>
+                                          </td>
+                                          <td>
+                                            <a 
+                                            (click)="addToDashBoard(item.videokey)" 
+                                            title="Click to Add Video"
+                                            class="btn btn-sm">
+                                              <i class="fa fa-plus-circle btn-default"></i>
+                                            </a>
+                                          </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="card-footer clearfix" 
+                             *ngIf="allVideoItems && allVideoItems.length > 0">
+                            <div class="d-flex p-2 justify-content-end">
+                                <div class="mr-1">
+                                <select
+                                    class="form-control form-control-sm"
+                                    [(ngModel)]="itemsPerPage"
+                                    >
+                                    <option *ngFor="let item of itemsPerPageValues" [ngValue]="item">{{
+                                    item
+                                    }}</option>
+                                </select>
+                                </div>
+                                <div class="mr-1">
+                                <input type="number" 
+                                    class="input" 
+                                    min="0" 
+                                    (change)="checkPageNumber($event)"
+                                    (keyup)="checkPageNumber($event)"
+                                    [(ngModel)]="pageNoBind"
+                                    placeholder="Go to"
+                                    class="form-control form-control-sm">
+                                </div>
+                                <div class="mr-1">
+                                <pagination-controls
+                                    class="float-right"
+                                    (pageChange)="pageNo = $event && pageNoBind = $event"
+                                    [maxSize]="pageMaxSize"
+                                    (pageBoundsCorrection)="onPageBoundsCorrection($event)">
+                                </pagination-controls>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+                <ng-template #noDataFound>
+                    <app-data-not-found [noDataMsg]="noDataMsg"></app-data-not-found>
+                </ng-template>
+            </section>
+    </div>
+  </div>

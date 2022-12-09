@@ -1,0 +1,33 @@
+<div
+  class="modal fade"
+  id="modal-update-unpublish"
+  aria-hidden="true"
+  style="display: none;"
+>
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-body text-center mt-3">
+        <h2 *ngIf="item">{{ item.displayMessage }}</h2>
+      </div>
+      <div class="modal-footer">
+        <button
+          type="button"
+          id="delImage"
+          class="btn btn-secondary"
+          data-dismiss="modal"
+          role="button"
+        >
+          Cancel
+        </button>
+        <button
+          id="publish"
+          type="button"
+          class="btn btn-primary"
+          (click)="updateunPublishItem(item.section, item.sectionItems)"
+        >
+          Unpublish
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,279 @@
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <!-- left column -->
+      <div class="col-md-12">
+        <!-- general form elements -->
+        <div class="card card-primary mt-3">
+          <div class="card-header">
+            <h3 class="card-title">Create Practice</h3>
+          </div>
+          <div class="card-body">
+            <form action="" [formGroup]="addPracticeForm">
+              <div class="row mb-2">
+                <div class="col-6">
+                  <div class="form-group">
+                    <label>Main Topic <span style="color: red;">*</span> </label>
+                    <select
+                      class="form-control"
+                      formControlName="categoryName"
+                      required
+                      (change)="changeCategory()"
+                      [ngClass]="{
+                        'is-invalid': submitted && practiceform.categoryName.errors
+                      }"
+                    >
+                      <option value="">Select main topic</option>
+                      <option *ngFor="let item of categoryList" [ngValue]="item">{{
+                        item.categoryName
+                      }}</option>
+                    </select>
+                    <div
+                      *ngIf="submitted && practiceform.categoryName.errors"
+                      class="invalid-feedback"
+                    >
+                      <div *ngIf="practiceform.categoryName.errors.required">
+                        Main topic name is required
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-6">
+                  <div class="form-group">
+                    <label>
+                      Sub Topic <span style="color: red;">*</span>
+                    </label>
+                    <select
+                      formControlName="subCategoryName"
+                      (change)="changeSubCategory()"
+                      class="form-control"
+                      required
+                      [ngClass]="{
+                        'is-invalid':
+                          submitted && practiceform.subCategoryName.errors
+                      }"
+                    >
+                      <option value="">Select sub topic</option>
+                      <option *ngFor="let item1 of catname" [ngValue]="item1"
+                        >{{ item1.subCategory }}
+                      </option>
+                    </select>
+                    <div
+                      *ngIf="submitted && practiceform.subCategoryName.errors"
+                      class="invalid-feedback"
+                    >
+                      <div
+                        *ngIf="practiceform.subCategoryName.errors.required"
+                      >
+                        Sub topic is required
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row mb-2">
+                <div class="col-6">
+                  <div class="form-group">
+                    <label> Chapter Name <span style="color: red;">*</span> </label>
+                    <select
+                      formControlName="chapterName"
+                      class="form-control"
+                      required
+                      [ngClass]="{
+                        'is-invalid': submitted && practiceform.chapterName.errors
+                      }"
+                    >
+                      <option value="">Select chapter name</option>
+                      <option *ngFor="let data of subcatname" [ngValue]="data">{{
+                        data.chapterName
+                      }}</option>
+                    </select>
+                    <div
+                      *ngIf="submitted && practiceform.chapterName.errors"
+                      class="invalid-feedback"
+                    >
+                      <div
+                        *ngIf="practiceform.chapterName.errors.required"
+                      >
+                        Chapter is required
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row mb-2">
+                <div class="col-6">
+                  <div class="form-group">
+                    <label>Practice Name <span style="color: red;">*</span> </label>
+                    <input
+                      class="form-control"
+                      type="text"
+                      formControlName="practiceName"
+                      placeholder="Practice name"
+                      required
+                      (input)="validateWhiteSpace()"
+                      [ngClass]="{
+                        'is-invalid':submitted && practiceform.practiceName.errors
+                      }"
+                    />
+                    <div
+                      *ngIf="submitted && practiceform.practiceName.errors"
+                      class="invalid-feedback"
+                    >
+                      <div *ngIf="spaceValidate === true || practiceform.practiceName.errors.required" style="color: red;">
+                        Practice Name is required
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-6">
+                  <div class="form-group">
+                    <label
+                      >Total Questions <span style="color: red;">*</span>
+                    </label>
+                    <input
+                      class="form-control"
+                      type="number"
+                      min="1"
+                      (keypress)="allowNumberOnly($event)"
+                      formControlName="totalNoOfQuestions"
+                      placeholder="Total no of questions"
+                      required
+                      [ngClass]="{
+                        'is-invalid':submitted && practiceform.totalNoOfQuestions.errors
+                      }"
+                    />
+                    <div
+                      *ngIf="submitted && practiceform.totalNoOfQuestions.errors"
+                      class="invalid-feedback"
+                    >
+                      <div
+                        *ngIf="practiceform.totalNoOfQuestions.errors.required"
+                      >
+                        Total no of question is required
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row mb-2">
+                <div class="col-6">
+                  <div class="form-group">
+                    <div class="checkbox">
+                      <label>
+                        Does each question carry equal weightage?
+                        <input
+                          type="checkbox"
+                          [(ngModel)]="weightage"
+                          formControlName="w_yes"
+                          (change)="addexamLink($event)"
+                        />
+                      </label>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-6">
+                  <div class="form-group">
+                    <div class="checkbox">
+                      <label>
+                        Premium Content 
+                        <input
+                          type="checkbox"
+                          formControlName="ispremium"
+                          (change)="isPremiumEvent($event)"
+                        />
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row mb-2" *ngIf="weightage">
+                <div class="col-6">
+                  <label>Marks<span style="color: red;">*</span> </label>
+                  <select
+                    class="form-control"
+                    formControlName="marks"
+                    required
+                    [ngClass]="{
+                      'is-invalid': submitted && practiceform.marks.errors
+                    }"
+                  >
+                    <option value="">Select Marks</option>
+                    <option value="1">1 Mark</option>
+                    <option value="2">2 Marks</option>
+                    <option value="3">3 Marks</option>
+                    <option value="4">4 Marks</option>
+                    <option value="5">5 Marks</option>
+                    <option value="10">10 Marks</option>
+                    <option value="15">15 Marks</option>
+                  </select>
+                  <div
+                    *ngIf="submitted && practiceform.marks.errors"
+                    class="invalid-feedback"
+                  >
+                    <div *ngIf="practiceform.marks.errors.required">
+                      Mark is required
+                    </div>
+                  </div>
+                  <div *ngIf="validateQuestionMark === true && submitted">
+                    <span style="color: red;">
+                      {{ validateQuestionMarkMsg }}
+                    </span>
+                  </div>
+                </div>
+                <div class="col-6">
+                  <label>
+                    Negative Marks <span style="color: red;">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    class="form-control float-left"
+                    formControlName="negativeMarks"
+                    placeholder="Negative marks"
+                    required
+                    (input)="checkNegativeMark()"
+                    [ngClass]="{
+                      'is-invalid':
+                        submitted && practiceform.negativeMarks.errors
+                    }"
+                  />
+                  <div
+                    *ngIf="submitted && practiceform.negativeMarks.errors"
+                    class="invalid-feedback"
+                  >
+                    <div
+                      *ngIf="practiceform.negativeMarks.errors.required"
+                    >
+                      Negative mark is required
+                    </div>
+                  </div>
+                  <div *ngIf="negativeValidation === true">
+                    <span style="color: red;">Please add valid marks</span>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+          <div class="card-footer d-flex justify-content-end">
+            <button
+              type="button"
+              class="btn btn-secondary mr-2"
+              (click)="gotoList()"
+              [disabled]="spaceValidate === true"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              class="btn btn-primary"
+              (click)="addPractice()"
+              [disabled]="spaceValidate === true"
+            >
+              Save
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

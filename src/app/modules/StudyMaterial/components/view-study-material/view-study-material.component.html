@@ -1,0 +1,221 @@
+<ngx-spinner type="ball-spin-clockwise-fade" color="#1897ff"
+  ><div style="color: white;">Loading..</div></ngx-spinner
+>
+
+<section class="content-header">
+  <div class="container-fluid">
+    <div class="d-flex justify-content-end mb-2">
+      <button
+        type="button"
+        class="btn btn-primary mr-2"
+        (click)="AddStudyMaterial()"
+      >
+        Add Study Material
+      </button>
+      <button
+        type="button"
+        class="btn btn-secondary"
+        (click)="Back()"
+      >
+        Go Back
+      </button>
+    </div>
+    <div class="d-flex justify-content-start mb-4">
+      <h1>
+        {{ studyMaterialName }}
+      </h1>
+    </div>
+    <div class="d-flex justify-content-start">
+      <div class="col-6">
+        <label>Main Topic :</label>
+        <span> {{ categoryName }}</span>
+      </div>
+      <div class="col-6">
+        <label>Sub Category Name :</label>
+        <span> {{ subCategoryName }}</span>
+      </div>
+    </div>
+  </div>
+</section>
+<div *ngIf="isDataLoaded">
+  <div *ngIf="allstudyMaterialItems && allstudyMaterialItems.length > 0">
+    <!--   (click)="addStudyMaterial()" <app-grid-container [gridHeaders]="['Parent Topic', 'Status', 'Edit', 'Delete']" [dataSource]="parentTopicList" ></app-grid-container> -->
+
+    <div class="d-flex justify-content-start">
+      <div class="col-4 mr-2">
+        <div class="form-group">
+          <input
+            type="text"
+            class="form-control"
+            placeholder="Search Study Material"
+            [(ngModel)]="searchStudyMaterial"
+          />
+        </div>
+      </div>
+      <div class="col-3">
+        <button
+          class="btn btn-info"
+          (click)="resetFilter()"
+        >
+          Reset
+        </button>
+      </div>
+    </div>
+  </div>
+  <section class="content">
+    <div
+      class="container-fluid"
+      *ngIf="
+        allstudyMaterialItems &&
+          (allstudyMaterialItems | filter: searchStudyMaterial).length > 0;
+        else noDataFound
+      "
+    >
+      <div class="card tex">
+        <div class="card-body p-0">
+          <div class="table-responsive table-wrapper-scroll-y my-custom-scrollbar">
+            <table class="table m-0">
+              <thead class="thead">
+                <tr *ngIf="allstudyMaterialItems.length > 0">
+                  <th width="20%" class="row-color">
+                    Title <i
+                      class="fa fa-arrow-up arrow"
+                      style="cursor: pointer;"
+                      (click)="onPageSortDesc()"
+                    >
+                    </i
+                    >
+                    <i
+                      class="fa fa-arrow-down arrow ml-1"
+                      style="cursor: pointer;"
+                      (click)="onPageSortAsc()"
+                    ></i>
+                  </th>
+                  <th class="row-color">Description</th>
+                  <th width="20%" class="row-color">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- <tr *ngFor="let item of allstudyMaterialItems">
+                  
+                </tr> -->
+                <tr
+                  *ngFor="
+                    let item of allstudyMaterialItems
+                      | filter: searchStudyMaterial
+                      | paginate: { itemsPerPage: smitemsPerPage, currentPage: smPageNo }
+                  "
+                >
+                  <td class="text">
+                    {{ item.title }}
+                  </td>
+                  <td class="text" [innerHTML]="item.description"></td>
+                  <td>
+                    <span
+                      ><a
+                        data-toggle="tooltip"
+                        style="border: none;"
+                        (click)="
+                          editStudyMaterial(
+                            item.studyMatDatakey,
+                            item.studyMaterialID
+                          )
+                        "
+                        title="Edit this study material"
+                        ><i class="fas fa-edit edit-botton mr-1"></i></a
+                    ></span>
+                    <span
+                      (click)="
+                        onDeleteStudyMaterial(
+                          item.studyMaterialID,
+                          item.studyMatDatakey
+                        )
+                      "
+                      ><a
+                        data-toggle="tooltip"
+                        title="Delete this study material"
+                      >
+                        <i class="fa fa-trash mr-2 delete-botton" aria-hidden="true"></i></a
+                    ></span>
+                    <span style="color: red;">{{ PublishedStatus }}</span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="card-footer clearfix" 
+            *ngIf="allstudyMaterialItems && allstudyMaterialItems.length > 0">
+          <div class="d-flex p-2 justify-content-end">
+            <div class="mr-1">
+              <select
+                class="form-control form-control-sm"
+                [(ngModel)]="smitemsPerPage"
+                >
+                <option *ngFor="let item of itemsPerPageValues" [ngValue]="item">{{
+                  item
+                }}</option>
+              </select>
+            </div>
+            <div class="mr-1">
+              <input type="number" 
+                class="input" 
+                min="0" 
+                (change)="checkPageNumber($event)"
+                (keyup)="checkPageNumber($event)"
+                [(ngModel)]="pageNoBind"
+                placeholder="Go to"
+                class="form-control form-control-sm">
+            </div>
+            <div class="mr-1">
+              <pagination-controls
+                class="float-right"
+                (pageChange)="smPageNo = $event && pageNoBind = $event"
+                [maxSize]="pageMaxSize"
+                (pageBoundsCorrection)="onPageBoundsCorrection($event)">
+              </pagination-controls>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <ng-template #noDataFound>
+      <app-data-not-found [noDataMsg]="noDataMsg"></app-data-not-found>
+    </ng-template>
+  </section>
+</div>
+
+<div
+  class="modal fade"
+  id="showDeleteDialog"
+  aria-hidden="true"
+  style="display: none;"
+>
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-body">
+        <span [innerHtml]="deleteMessage"></span>
+      </div>
+      <div class="modal-footer">
+        <button
+          type="button"
+          id="delImage"
+          class="btn btn-secondary btn-hover-red px-3 reset"
+          data-dismiss="modal"
+          role="button"
+        >
+          Cancel
+        </button>
+        <button
+          id="publish"
+          type="button"
+          class="btn btn-primary"
+          style="margin-right: 165px;"
+          (click)="deleteSrusyMaterial(studyMaterialID, studyMatkey)"
+        >
+          Confirm
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,221 @@
+<ngx-spinner type="ball-spin-clockwise-fade" color="#1897ff"
+  ><div style="color: white;">Loading..</div></ngx-spinner
+>
+
+<section class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <h1>
+          {{ examNames }}
+        </h1>
+      </div>
+
+      <div class="col-sm-12 d-flex justify-content-end">
+        <button
+          *ngIf="Qstnlength < qstnCount"
+          type="button"
+          class="btn btn-primary mr-2"
+          (click)="addQuestions(examkey, examinCatkey, categorykey)"
+        >
+          Add Questions
+        </button>
+        <button
+          type="button"
+          class="btn btn-secondary"
+          (click)="Back()"
+        >
+          Go Back
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+<div *ngIf="isDataLoaded">
+  <div *ngIf="QuestionList && QuestionList.length > 0">
+    <div class="row">
+      <div class="col-md-5">
+        <label class="ml-4">Main Topic :</label>
+        <span class="ml-5"> {{ categoryName }}</span>
+      </div>
+      <div class="col-md-6">
+        <label>Level Name :</label>
+        <span class="ml-4"> {{ levelName }}</span>
+      </div>
+    </div>
+    <br />
+    <div class="row">
+      <div class="col-md-3">
+        <label style="margin-left: 10%;">Total No Of Questions :</label>
+        <span style="margin-left: 10%;"> {{ totalNoOfQuestions }}</span>
+      </div>
+      <div class="col-md-4">
+        <label>Total Mark :</label>
+        <span style="margin-left: 10%;"> {{ totalMark }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- <app-grid-container [gridHeaders]="['Parent Topic', 'Status', 'Edit', 'Delete']" [dataSource]="parentTopicList" ></app-grid-container> -->
+  <div>
+    <div class="row">
+      <div class="row form-group"></div>
+    </div>
+    <section class="content mt-1">
+      <div
+        class="container-fluid"
+        *ngIf="QuestionList && QuestionList.length > 0; else noDataFound"
+      >
+        <div class="card tex">
+          <div class="card-body p-0">
+            <div class="table-responsive table-wrapper-scroll-y my-custom-scrollbar">
+              <table class="table m-0">
+                <thead class="thead">
+                  <tr>
+                    <th class="row-color">#</th>
+                    <th class="row-color"> 
+                      Question 
+                      <i
+                        class="fa fa-arrow-up arrow ml-1"
+                        style="cursor: pointer;"
+                        (click)="onPageSortAsc()"
+                      ></i>
+                      <i
+                        class="fa fa-arrow-down arrow ml-2"
+                        style="cursor: pointer;"
+                        (click)="onPageSortDesc()"
+                      ></i>
+                    </th>
+                    <th class="row-color">Answer</th>
+                    <!-- <th class="row-color">Options</th> -->
+                    <!-- <th class="row-color">Difficulty</th> -->
+                    <th width="10%" class="row-color">Main tag</th>
+                    <th width="10%" class="row-color">Sub tag</th>
+                    <th width="10%" class="row-color">Action</th>
+                  </tr>
+                </thead>
+                <tbody class="scrollit">
+                  <tr
+                    *ngFor="let item of QuestionList
+                        | paginate: { itemsPerPage: qstitemsPerPage, currentPage: qstPageNo };
+                        let i = index;
+                    "
+                  >
+                    <td class="text">{{ (qstPageNo - 1) * qstitemsPerPage + i +1 }}</td>
+                    <td class="text">
+                      {{ item.question }}
+                    </td>
+                    <td>{{ item.rightAnswer }}</td>
+                    <!-- <td class="text">
+                      {{ item.noOfOptions }}
+                    </td>
+                    <td class="text">
+                      {{ item.difficulty }}
+                    </td> -->
+                    <td>
+                      <span>{{ item.qstnTags }}</span>
+                    </td>
+                    <td>
+                      <span>{{ item.subqstnTags }}</span>
+                    </td>
+                    <td>
+                      <span class="mr-2"
+                        (click)="onUpdateQuestion(item.examkeys, item.qstnkey)"
+                        ><a
+                          data-toggle="tooltip"
+                          title="Edit this question"
+                          ><i class="fas fa-edit mr-2 edit-botton"></i></a
+                      ></span>
+                      <span class="mr-2"
+                        (click)="onDeleteQuestion(item.examkeys, item.qstnkey)"
+                        ><a
+                          data-toggle="tooltip"
+                          style="border: none;"
+                          title="Delete this question"
+                        >
+                          <i
+                            class="fa fa-trash delete-botton"
+                            aria-hidden="true"
+                          ></i></a
+                      ></span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="card-footer clearfix" 
+            *ngIf="QuestionList && QuestionList.length > 0">
+            <div class="d-flex p-2 justify-content-end">
+              <div class="mr-1">
+                <select
+                  class="form-control form-control-sm"
+                  [(ngModel)]="qstitemsPerPage"
+                  >
+                  <option *ngFor="let item of itemsPerPageValues" [ngValue]="item">{{
+                    item
+                  }}</option>
+                </select>
+              </div>
+              <div class="mr-1">
+                <input type="number" 
+                  class="input" 
+                  min="0" 
+                  (change)="checkPageNumber($event)"
+                  (keyup)="checkPageNumber($event)"
+                  [(ngModel)]="pageNoBind"
+                  placeholder="Go to"
+                  class="form-control form-control-sm">
+              </div>
+              <div class="mr-1">
+                <pagination-controls
+                  class="float-right"
+                  (pageChange)="qstPageNo = $event && pageNoBind = $event"
+                  [maxSize]="pageMaxSize"
+                  (pageBoundsCorrection)="onPageBoundsCorrection($event)">
+                </pagination-controls>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <ng-template #noDataFound>
+      <app-data-not-found [noDataMsg]="noDataMsg"></app-data-not-found>
+    </ng-template>
+  </div>
+</div>
+
+<div
+  class="modal fade"
+  id="showDeleteDialog"
+  aria-hidden="true"
+  style="display: none;"
+>
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-body">
+        <span [innerHtml]="deleteMessage"></span>
+      </div>
+      <div class="modal-footer">
+        <button
+          type="button"
+          id="delImage"
+          class="btn btn-secondary"
+          data-dismiss="modal"
+          role="button"
+        >
+          Cancel
+        </button>
+        <button
+          id="publish"
+          type="button"
+          class="btn btn-primary"
+          (click)="deleteExamQuestion(examkeys, qstnkey)"
+        >
+          Confirm
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

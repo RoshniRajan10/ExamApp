@@ -1,0 +1,517 @@
+<ngx-spinner type="ball-spin-clockwise-fade" color="#1897ff"
+  ><div style="color: white;">Loading..</div></ngx-spinner
+>
+
+<section class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <h1>
+          Chapters
+        </h1>
+      </div>
+      <div class="col-sm-12">
+        <button
+          type="button"
+          class="btn btn-primary float-right"
+          data-toggle="modal"
+          data-target="#showChapterDialog"
+        >
+          Create Chapter
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div
+  class="modal fade"
+  id="showChapterDialog"
+  aria-hidden="true"
+  style="display: none;"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Create Chapter</h4>
+        <button
+          type="button"
+          class="close"
+          data-dismiss="modal"
+          aria-label="Close"
+        >
+          <span aria-hidden="true"></span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="ChapterFormAdd" action="">
+          <div class="row">
+            <div class="col-4 mt-1">
+              <label>Main Topic <span style="color: red;">*</span></label>
+            </div>
+            <div class="col-6">
+              <select
+                formControlName="categoryName"
+                (change)="changeCategoryAdd()"
+                class="form-control float-left"
+                [ngClass]="{
+                  'is-invalid': submitted && chapterformAdd.categoryName.errors
+                }"
+              >
+                <option value="">Select Main Topic</option>
+                <option *ngFor="let item of MainTopics" [ngValue]="item">{{
+                  item.categoryName
+                }}</option>
+              </select>
+              <div
+                *ngIf="submitted && chapterformAdd.categoryName.errors"
+                class="invalid-feedback"
+              >
+                <div *ngIf="chapterformAdd.categoryName.errors.required">
+                  Select Main Topic
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row mt-2">
+            <div class="col-4 mt-1">
+              <label>Sub Topic <span style="color: red;">*</span></label>
+            </div>
+            <div class="col-6">
+              <select
+                formControlName="subCategoryName"
+                required
+                class="form-control float-left"
+                [ngClass]="{
+                  'is-invalid':
+                    submitted && chapterformAdd.subCategoryName.errors
+                }"
+              >
+                <option value="">Select Sub Topic</option>
+                <option *ngFor="let item1 of subCatNameAdd" [ngValue]="item1">{{
+                  item1.subCategory
+                }}</option>
+              </select>
+              <div
+                *ngIf="submitted && chapterformAdd.subCategoryName.errors"
+                class="invalid-feedback"
+              >
+                <div *ngIf="chapterformAdd.subCategoryName.errors.required">
+                  Sub topic name is required
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-4 mt-4">
+              <label>Chapter Name <span style="color: red;">*</span></label>
+            </div>
+            <div class="col-6">
+              <input
+                type="text"
+                class="form-control mb-2 mt-3"
+                placeholder="Chapter Name"
+                formControlName="chapterName"
+                required
+                autofocus
+                [ngClass]="{
+                  'is-invalid': submitted && chapterformAdd.chapterName.errors
+                }"
+              />
+              <div
+                *ngIf="submitted && chapterformAdd.chapterName.errors"
+                class="invalid-feedback"
+              >
+                <div *ngIf="chapterformAdd.chapterName.errors.required">
+                  Chapter name is required
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-10 mt-4">
+              <div class="form-group">
+                <div class="checkbox">
+                  <label>
+                    Premium Content 
+                    <input
+                      type="checkbox"
+                      formControlName="ispremium"
+                      (change)="isPremiumEvent($event)"
+                    />
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button
+          class="btn btn-secondary"
+          (click)="onDialogClose('showChapterDialog')"
+        >
+          Cancel
+        </button>
+        <button
+          type="submit"
+          class="btn btn-primary"
+          [disabled]="imageUpload == true"
+          (click)="addChapter()"
+        >
+          Save
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<div *ngIf="isDataLoaded">
+  <div class="col-md-12">
+    <div class="row">
+      <div class="col-md-3">
+        <input
+          type="text"
+          class="form-control"
+          (input)="onSearchChange($event.target.value)"
+          placeholder="Search Chapter"
+          [(ngModel)]="searchChapter"
+          style="display: inline;"
+        />
+      </div>
+      <form [formGroup]="chapterSearchForm" action="" class="col-md-6">
+        <div class="row">
+          <div class="col-md-6">
+            <select
+              formControlName="categoryName"
+              (change)="changeCategory()"
+              class="form-control float-left"
+              [(ngModel)]="searchFilter.mainTopic"
+            >
+              <option *ngFor="let item of MainTopicList" [ngValue]="item">{{
+                item.categoryName
+              }}</option>
+            </select>
+          </div>
+          <div class="col-md-6">
+            <select
+              formControlName="subCategoryName"
+              (change)="changeSubCategory()"
+              class="form-control float-left"
+              [(ngModel)]="searchFilter.subTopic"
+            >
+              <option *ngFor="let item1 of subcatname" [ngValue]="item1">{{
+                item1.subCategory
+              }}</option>
+            </select>
+          </div>
+          <!-- <div class="col-md-4">
+            <select
+              formControlName="chapterName"
+              (change)="changeChapter()"
+              class="form-control"
+              [(ngModel)]="searchFilter.chapter"
+            >
+              <option *ngFor="let items of chapterItems" [ngValue]="items">{{
+                items.chapterName
+              }}</option>
+            </select>
+          </div> -->
+        </div>
+      </form>
+      <div class="col-md-3 text-left">
+        <button
+          class="btn btn-info"
+          (click)="resetFilter()"
+        >
+          Reset
+        </button>
+      </div>
+    </div>
+  </div>
+  <section class="content mt-3">
+    <div
+      class="container-fluid"
+      *ngIf="
+        chapterList && (chapterList | filter: searchChapter).length > 0;
+        else noDataFound
+      "
+    >
+      <div class="card tex">
+        <div class="card-body p-0">
+          <div class="table-responsive table-wrapper-scroll-y my-custom-scrollbar">
+            <table class="table m-0">
+              <thead class="thead">
+                <tr *ngIf="chapterList.length > 0">
+                  <!-- <th>#</th> -->
+                  <th class="row-color">
+                    Chapter Name &nbsp;<i
+                      class="fa fa-arrow-up arrow"
+                      style="cursor: pointer;"
+                      (click)="onPageSortDesc()"
+                    >
+                    </i
+                    >&nbsp;
+                    <i
+                      class="fa fa-arrow-down arrow"
+                      style="cursor: pointer;"
+                      (click)="onPageSortAsc()"
+                    ></i>
+                  </th>
+                  <th class="row-color">Sub Topic</th>
+                  <th class="row-color">Main Topic</th>
+                  <th width="10%" class="row-color"></th>
+                  <th width="20%" class="row-color">Action</th>
+                </tr>
+              </thead>
+
+              <tbody class="scrollit">
+                <tr
+                  *ngFor="
+                    let item of chapterList
+                      | filter: searchChapter
+                      | paginate: { itemsPerPage: itemsPerPage, currentPage: pageNo }
+                  "
+                >
+                  <td class="text">
+                    {{ item.chapterName }}
+                  </td>
+                  <td class="text">
+                    {{ item.subCategoryName }}
+                  </td>
+                  <td class="text">
+                    {{ item.categoryName }}
+                  </td>
+                  <td>
+                    <span *ngIf="item.isPremium" class="mr-1">
+                      <a
+                        data-toggle="tooltip"
+                        title="Premium Content"
+                      >
+                        <i class="fas fa-dollar-sign"></i>
+                      </a>
+                    </span>
+                  </td>
+                  <td>
+                    <span
+                      class="mr-3"
+                      *ngIf="item.isPublished == true"
+                      (click)="onUpdateUnPublish(item.$key, item.isPublished)"
+                      ><a
+                        data-toggle="tooltip"
+                        title="Unpublish this chapter"
+                        ><i class="fas fa-eye published-botton"></i></a
+                    ></span>
+                    <span 
+                      class="mr-3"
+                      style="cursor: pointer;"
+                      *ngIf="item.isPublished == false"
+                      (click)="onUpdatePublish(item.$key, item.isPublished, item)"
+                      ><a
+                        data-toggle="tooltip"
+                        title="Publish this chapter"
+                        ><i class="fas fa-eye-slash unpublished-botton"></i></a
+                    ></span>
+                    <span
+                      (click)="onAddContents(item.$key,item.chapterInSubCatKey)"
+                      class="mr-3"
+                      ><a
+                        data-toggle="tooltip"
+                        title="Add contents"
+                        ><i class="fas fa-plus-circle add-button"></i></a
+                    ></span>
+                    <span
+                      class="mr-3"
+                      ><a
+                        data-toggle="tooltip"
+                        (click)="
+                          onUpdateChapter(
+                            item.$key,
+                            item.chapterInSubCatKey,
+                            item.categorykey,
+                            item.subCategorykey
+                          )
+                        "
+                        title="Edit this chapter"
+                        ><i class="fas fa-edit edit-botton"></i></a
+                    ></span>
+                    <span
+                      class="mr-3"
+                      (click)="
+                        onDeleteChapter(
+                          item.$key,
+                          item.isPublished,
+                          item.chapterInSubCatKey,
+                          item.categorykey,
+                          item.subCategorykey
+                        )"
+                      ><a
+                        data-toggle="tooltip"
+                        title="Delete this chapter"
+                      >
+                        <i
+                          class="fa fa-trash delete-botton"
+                        ></i></a
+                    ></span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="card-footer clearfix" 
+            *ngIf="chapterList && chapterList.length > 0">
+          <div class="d-flex p-2 justify-content-end">
+            <div class="mr-1">
+              <select
+                class="form-control form-control-sm"
+                [(ngModel)]="itemsPerPage"
+                >
+                <option *ngFor="let item of itemsPerPageValues" [ngValue]="item">{{
+                  item
+                }}</option>
+              </select>
+            </div>
+            <div class="mr-1">
+              <input type="number" 
+                class="input" 
+                min="0" 
+                (change)="checkPageNumber($event)"
+                (keyup)="checkPageNumber($event)"
+                [(ngModel)]="pageNoBind"
+                placeholder="Go to"
+                class="form-control form-control-sm">
+            </div>
+            <div class="mr-1">
+              <pagination-controls
+                class="float-right"
+                (pageChange)="pageNo = $event && pageNoBind = $event"
+                [maxSize]="pageMaxSize"
+                (pageBoundsCorrection)="onPageBoundsCorrection($event)">
+              </pagination-controls>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <ng-template #noDataFound>
+      <app-data-not-found [noDataMsg]="noDataMsg"></app-data-not-found>
+    </ng-template>
+  </section>
+</div>
+
+<div
+  class="modal fade"
+  id="showupdateChapterDialog"
+  aria-hidden="true"
+  style="display: none;"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Update Chapter</h4>
+        <button
+          type="button"
+          class="close"
+          data-dismiss="modal"
+          aria-label="Close"
+        >
+          <span aria-hidden="true"></span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="ChapterFormUpdate" action="">
+          <div class="row">
+            <div class="col-4 mt-1">
+              <label>Main Topic <span style="color: red;">*</span></label>
+            </div>
+            <div class="col-6">
+              <span>{{ categoryName }}</span>
+            </div>
+          </div>
+
+          <div class="row mt-2">
+            <div class="col-4 mt-1">
+              <label>Sub Topic <span style="color: red;">*</span></label>
+            </div>
+            <div class="col-6">
+              <span>{{ subCategoryName }}</span>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-4 mt-4">
+              <label>Chapter Name <span style="color: red;">*</span></label>
+            </div>
+            <div class="col-6">
+              <input
+                type="text"
+                class="form-control mb-2 mt-3"
+                placeholder="Chapter Name"
+                [(ngModel)]="chapterName"
+                formControlName="chapterName"
+                required
+                autofocus
+                [ngClass]="{
+                  'is-invalid':
+                    submitted && chapterformUpdate.chapterName.errors
+                }"
+              />
+              <div
+                *ngIf="submitted && chapterformUpdate.chapterName.errors"
+                class="invalid-feedback"
+              >
+                <div *ngIf="chapterformUpdate.chapterName.errors.required">
+                  Chapter name is required
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-10 mt-4">
+              <div class="form-group">
+                <div class="checkbox">
+                  <label>
+                    Premium Content 
+                    <input
+                      type="checkbox"
+                      [(ngModel)]="isPremium"
+                      formControlName="ispremium"
+                      (change)="isPremiumEvent($event)"
+                    />
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button
+          class="btn btn-secondary"
+          (click)="onDialogClose('showupdateChapterDialog')"
+        >
+          Cancel
+        </button>
+        <button
+          type="submit"
+          class="btn btn-primary"
+          (click)="
+            UpdateChapter(
+              id,
+              chapterInSubCatKeys,
+              categorykeys,
+              subCategorykeys
+            )
+          "
+        >
+          Update
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<app-common-delete [item]="deleteItem"></app-common-delete>
+<!-- <app-common-publish [item]="publishItem"></app-common-publish> -->
+<app-common-publish-without-notification [item]="publishItem"></app-common-publish-without-notification>
+<app-common-unpublish [item]="unPublishItem"></app-common-unpublish>

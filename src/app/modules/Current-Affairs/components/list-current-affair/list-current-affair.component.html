@@ -1,0 +1,332 @@
+<ngx-spinner type="ball-spin-clockwise-fade" color="#1897ff">
+  <div style="color: white;">Loading..</div>
+</ngx-spinner>
+
+<section class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <h1>
+          Current Affairs
+        </h1>
+      </div>
+      <div class="col-sm-12">
+        <button
+          type="button"
+          class="btn btn-primary float-right"
+          (click)="addCurrentAffairs()"
+        >
+          Add Current Affairs
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+<div *ngIf="isDataLoaded">
+  <div class="col-md-12">
+    <div class="row">
+      <div class="col-md-4">
+        <input
+          type="text"
+          class="form-control"
+          (input)="onSearchChange($event.target.value)"
+          placeholder="Search Event"
+          [(ngModel)]="searchEvent"
+        />
+      </div>
+      <div class="col-md-4">
+        <form [formGroup]="currentAffairForm" action="" class="">
+          <select
+            formControlName="monthname"
+            (change)="changeMonth()"
+            class="form-control"
+            [(ngModel)]="searchFilter.monthName"
+          >
+            <option *ngFor="let item of monthList" [ngValue]="item">{{
+              item.monthname
+            }}</option>
+          </select>
+        </form>
+      </div>
+      <div class="col-md-4">
+        <button
+          class="btn btn-info"
+          (click)="resetFilter()"
+        >
+          Reset
+        </button>
+      </div>
+    </div>
+  </div>
+  <section class="content mt-3">
+    <div
+      class="container-fluid"
+      *ngIf="
+        allCurrentAffairItems &&
+          (allCurrentAffairItems | filter: searchEvent).length > 0;
+        else noDataFound
+      "
+    >
+      <div class="card tex">
+        <div class="card-body p-0">
+          <div class="table-responsive table-wrapper-scroll-y my-custom-scrollbar">
+            <table class="table m-0">
+              <thead class="thead">
+                <tr *ngIf="allCurrentAffairItems.length > 0">
+                  <!-- <th>#</th> -->
+                  <th width="20%" class="row-color">
+                    Title <i
+                      class="fa fa-arrow-up arrow ml-1"
+                      (click)="onPageSortDesc()"
+                      style="cursor: pointer;"
+                    >
+                    </i
+                    ><i
+                      class="fa fa-arrow-down arrow ml-1"
+                      (click)="onPageSortAsc()"
+                      style="cursor: pointer;"
+                    ></i>
+                  </th>
+                  <th width="60%" class="row-color">Description</th>
+                  <th width="10%" class="row-color">Action</th>
+                </tr>
+              </thead>
+              <tbody class="scrollit">
+                <tr
+                  *ngFor="
+                    let item of allCurrentAffairItems
+                      | filter: searchEvent
+                      | paginate: { itemsPerPage: itemsPerPage, currentPage: pageNo };
+                    let i = index
+                  "
+                >
+                  <!-- <td>{{ i + 1 }}</td> -->
+                  <td class="">
+                    <div class="title">
+                      <span class="" data-toggle="tooltip" title="{{item.title}}"><strong>{{ item.title }}</strong></span>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="card overflow-auto">
+                      <div class="card-body">
+                        <div class="description">
+                          <span [innerHTML]="item.description"></span>
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <span (click)="onUpdateUnpublish(item.$key)"
+                          *ngIf="item.isPublished == true"
+                          class="mr-2">
+                      <a data-toggle="tooltip"
+                         title="Unpublish this current affair">
+                        <i class="fas fa-eye published-botton"></i>
+                      </a>
+                    </span>
+                    <span (click)="onUpdatePublish(item.$key)"
+                          *ngIf="item.isPublished == false"
+                          class="mr-2">
+                        <a data-toggle="tooltip"
+                           title="Publish this current affair">
+                          <i class="fas fa-eye-slash unpublished-botton"></i>
+                        </a>
+                    </span>
+                    <span (click)="onUpdateCurrentAffair(item.$key)"
+                          class="mr-2">
+                      <a data-toggle="tooltip"
+                         title="Edit this current affair">
+                        <i class="fas fa-edit edit-botton"></i>
+                      </a>
+                    </span>
+                    <span (click)="onDeleteCurrentAffair(item.$key, item.isPublished)" 
+                          class="mr-2">
+                      <a data-toggle="tooltip"
+                         title="Delete this current affair">
+                        <i class="fa fa-trash delete-botton"></i>
+                      </a>
+                    </span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="card-footer clearfix" 
+             *ngIf="allCurrentAffairItems && allCurrentAffairItems.length > 0">
+          <div class="d-flex p-2 justify-content-end">
+            <div class="mr-1">
+              <select
+                class="form-control form-control-sm"
+                [(ngModel)]="itemsPerPage"
+                >
+                <option *ngFor="let item of itemsPerPageValues" [ngValue]="item">{{
+                  item
+                }}</option>
+              </select>
+            </div>
+            <div class="mr-1">
+              <input type="number" 
+                class="input" 
+                min="0" 
+                (change)="checkPageNumber($event)"
+                (keyup)="checkPageNumber($event)"
+                [(ngModel)]="pageNoBind"
+                placeholder="Go to"
+                class="form-control form-control-sm">
+            </div>
+            <div class="mr-1">
+              <pagination-controls
+                class="float-right"
+                (pageChange)="pageNo = $event && pageNoBind = $event"
+                [maxSize]="pageMaxSize"
+                (pageBoundsCorrection)="onPageBoundsCorrection($event)">
+              </pagination-controls>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <ng-template #noDataFound>
+      <app-data-not-found [noDataMsg]="noDataMsg"></app-data-not-found>
+    </ng-template>
+  </section>
+</div>
+
+<div
+  class="modal fade"
+  id="modal-update-publish"
+  aria-hidden="true"
+  style="display: none;"
+>
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-body text-center mb-3">
+        <h2>{{publishWarningMsg}}</h2>
+      </div>
+      <div>
+        <form [formGroup]="notificationForm" action="" class="mt-1">
+          <div class="col-12">
+            <div class="form-group">
+              <div class="checkbox">
+                <label>
+                  <input
+                    class="mr-2"
+                    type="checkbox"
+                    name="noti_check"
+                    [checked]="checked"
+                    (change)="checkNotification($event)"
+                  />
+                  Please check for sending the notification.
+                </label>
+              </div>
+            </div>
+          </div>
+          <div class="col-12 mb-3" *ngIf="msgtitle">
+            <label>Title <span style="color: red;">*</span></label>
+            <input
+              type="text"
+              class="form-control"
+              formControlName="notificationtitle"
+              required
+              [ngClass]="{
+                'is-invalid': submitted && notificationform.notificationtitle.errors
+              }"
+            />
+            <div
+              *ngIf="submitted && notificationform.notificationtitle.errors"
+              class="invalid-feedback"
+            >
+              <div *ngIf="notificationform.notificationtitle.errors.required">
+                Title is required
+              </div>
+            </div>
+          </div>
+          <div class="col-12 mb-32" *ngIf="msgtitle">
+            <label>Message<span style="color: red;">*</span></label>
+            <textarea
+              class="form-control"
+              formControlName="notificationmessage"
+              rows="6"
+            ></textarea>
+            <!-- <textarea
+              class="form-control"
+              formControlName="notificationmessage"
+              style="height: 151px !important; width: 460px;"
+              required
+              [ngClass]="{
+                'is-invalid': submitted && notificationform.notificationtitle.errors
+              }"
+            ></textarea>
+            <div
+              *ngIf="submitted && notificationform.notificationtitle.errors"
+              class="invalid-feedback"
+            >
+              <div *ngIf="notificationform.notificationtitle.errors.required">
+                Message is required
+              </div>
+            </div> -->
+          </div>
+
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-dismiss="modal"
+              role="button"
+              (click)="cancelPublish()"
+            >
+              Cancel
+            </button>
+            <button
+              id="publish"
+              type="button"
+              class="btn btn-primary"
+              (click)="updatePublish(selectedId)"
+            >
+              Publish
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div
+  class="modal fade"
+  id="modal-update-unpublish"
+  aria-hidden="true"
+  style="display: none;"
+>
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-body text-center mt-3">
+        <h2>{{publishWarningMsg}}</h2>
+      </div>
+      <div class="modal-footer">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          data-dismiss="modal"
+          role="button"
+          (click)="cancelPublish()"
+        >
+          Cancel
+        </button>
+        <button
+          id="publish"
+          type="button"
+          class="btn btn-primary"
+          (click)="updateUnPublish(selectedId)"
+        >
+          Unpublish
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-common-delete [item]="deleteItem"></app-common-delete>
+<!-- <app-common-unpublish [item]="unPublishItem"></app-common-unpublish> -->
